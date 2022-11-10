@@ -1,0 +1,501 @@
+﻿@page "/"
+@using rclPantheon.Controls
+<DxFormLayout @ref="frmLayout" Id="frm" CssClass="w-100">
+    <DxFormLayoutItem Caption="Nama Lengkap" ColSpanMd="6">
+        <DxTextBox @ref="@txbNamaLengkap" Id="Name" />
+    </DxFormLayoutItem>
+    <DxFormLayoutTabPages @bind-ActiveTabIndex="@ActiveTabIndex"
+                          RenderMode="TabsRenderMode.OnDemand" ScrollMode="TabsScrollMode.Auto">
+        <DxFormLayoutTabPage Caption="Identitas">
+            <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
+                <DxFormLayoutItem Caption="Nama Panggilan" ColSpanMd="12">
+                    <DxTextBox @ref="@txbNamaPanggilan"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Jenis Kelamin" ColSpanMd="12">
+                    <RadzenRadioButtonList TValue="int" Orientation="Radzen.Orientation.Horizontal">
+                        <Items>
+                            <RadzenRadioButtonListItem Text="Laki-Laki" Value="1" />
+                            <RadzenRadioButtonListItem Text="Perempuan" Value="2" />
+                        </Items>
+                    </RadzenRadioButtonList>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Tempat Lahir" ColSpanMd="12">
+                    <DxTextBox @ref="@txbTempatLahir"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Tanggal Lahir" ColSpanMd="12">
+                    <DxDateEdit @ref="@dteTanggalLahir" Date="@DateTime.Today"></DxDateEdit>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Usia" ColSpanMd="12">
+                    <DxTextBox @ref="@txbUsia"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="No. Identitas 1" ColSpanMd="12">
+                    <DxTextBox @ref="@txbNoIdentitas1"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="No. Identitas 2" ColSpanMd="12">
+                    <DxTextBox @ref="@txbNoIdentitas2"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Tanggal Rekrut" ColSpanMd="12">
+                    <DxDateEdit @ref="@dteTanggalRekrut" Date="@DateTime.Today"></DxDateEdit>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Lama Kerja" ColSpanMd="12">
+                    <DxTextBox @ref="@txbLamaKerja"></DxTextBox>
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+            <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
+                <DxFormLayoutItem>
+                    <div class="img-preview">
+                        @{
+                            var x = 0;
+                            foreach (var item in filesBase64)
+                            {
+                                x = x + 1;
+                                <p>Data ke-@x</p>
+                                <img src="data:@item.contentType;base64,@item.base64data" height="100" />
+                            }
+                        }
+                    </div>
+                    @*<div class="input-group">*@
+                    @*<div class="custom-file">
+                            <InputFile class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="inputFile" />
+                        </div>*@
+                        <div id="overviewDemoDropZone" class="card custom-drop-zone bg-light rounded-3 w-100 m-0">
+                            <center>
+                                <span class="drop-file-icon mb-3"></span>
+                                <label class="input-label" for="inputFile">
+                                    Pilih Gambar
+                                    <InputFile hidden="true" class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="inputFile" />
+                                </label>
+                            </center>
+
+                        </div>
+                    @*<div class="input-group-append">
+                            <button class="btn btn-success" @onclick="Upload" disabled="@isDisabled">Upload</button>
+                        </div>*@
+                    @*</div>*@
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+        </DxFormLayoutTabPage>
+        <DxFormLayoutTabPage Caption="Komunikasi">
+            <DxFormLayoutGroup Caption="Daerah Asal" ColSpanMd="6">
+                <DxFormLayoutItem Caption="Alamat" ColSpanMd="12">
+                    <DxTextBox @ref="txbAlamatDaerahAsal" Id="txbAlamatDaerahAsal"/>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Kota" ColSpanMd="12">
+                    <DxComboBox @ref="cbxKotaAsal" FilteringMode="DataGridFilteringMode.Contains" EditFormat="{0} {1}" Data="@_cities" @bind-Value="_selectedCities" Id="cbxKotaAsal">
+                        <DxListEditorColumn FieldName="City"
+                        Caption="City"
+                        />
+                        <DxListEditorColumn FieldName="Code"
+                                            Caption="Code"/>
+                    </DxComboBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Kecamatan" ColSpanMd="12">
+                    <DxComboBox @ref="cbxKecamatanAsal" EditFormat="{0} {1}" FilteringMode="DataGridFilteringMode.Contains" Data="@_cities" @bind-Value="_selectedCities" Id="cbxKecamatanAsal">
+                        <DxListEditorColumn FieldName="City"
+                        Caption="City"
+                        />
+                        <DxListEditorColumn FieldName="Code"
+                                            Caption="Code" />
+                    </DxComboBox>
+                </DxFormLayoutItem>
+                 <DxFormLayoutItem Caption="Kelurahan" ColSpanMd="12">
+                    <DxComboBox @ref="cbxKelurahanAsal" EditFormat="{0} {1}" FilteringMode="DataGridFilteringMode.Contains" Data="@_cities" @bind-Value="_selectedCities" Id="cbxKelurahanAsal">
+                        <DxListEditorColumn FieldName="City"
+                        Caption="City"
+                        />
+                        <DxListEditorColumn FieldName="Code"
+                                            Caption="Code" />
+                    </DxComboBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Kode Pos" ColSpanMd="4">
+                    <DxTextBox @ref="txbKodePosDaerahAsal" Id="txbKodePosDaerahAsal"/>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem ColSpanMd="8">
+                    <DxTextBox @ref="txbProvinsiAsal" Id="txbProvinsiAsal"/>
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+            <DxFormLayoutGroup Caption="Daerah Tinggal" ColSpanMd="6">
+               <DxFormLayoutItem Caption="Alamat" ColSpanMd="12">
+                    <DxTextBox @ref="txbAlamatDaerahTinggal" Id="txbAlamatDaerahAsal"/>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Kota" ColSpanMd="12">
+                    <DxComboBox @ref="cbxKotaTinggal" EditFormat="{0} {1}" FilteringMode="DataGridFilteringMode.Contains" Data="@_cities" @bind-Value="_selectedCities" Id="cbxKotaTinggal">
+                        <DxListEditorColumn FieldName="City"
+                        Caption="City"
+                        />
+                        <DxListEditorColumn FieldName="Code"
+                                            Caption="Code" />
+                    </DxComboBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Kecamatan" ColSpanMd="12">
+                    <DxComboBox @ref="cbxKecamatanTinggal" EditFormat="{0} {1}" FilteringMode="DataGridFilteringMode.Contains" Data="@_cities" @bind-Value="_selectedCities" Id="cbxKecamatanTinggal">
+                        <DxListEditorColumn FieldName="City"
+                        Caption="City"
+                        />
+                        <DxListEditorColumn FieldName="Code"
+                                            Caption="Code" />
+                    </DxComboBox>
+                </DxFormLayoutItem>
+                 <DxFormLayoutItem Caption="Kelurahan" ColSpanMd="12">
+                    <DxComboBox @ref="cbxKelurahanTinggal" EditFormat="{0} {1}" FilteringMode="DataGridFilteringMode.Contains" Data="@_cities" @bind-Value="_selectedCities" Id="cbxKelurahanTinggal">
+                        <DxListEditorColumn FieldName="City"
+                        Caption="City"
+                        />
+                        <DxListEditorColumn FieldName="Code"
+                                            Caption="Code" />
+                    </DxComboBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Kode Pos" ColSpanMd="4">
+                    <DxTextBox @ref="txbKodePosDaerahTinggal" Id="txbKodePosDaerahAsal"/>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem ColSpanMd="8">
+                    <DxTextBox @ref="txbProvinsiTinggal" Id="txbProvinsiTinggal"/>
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+            <DxFormLayoutGroup Caption="Telekomunikasi" ColSpanMd="6">
+                <DxFormLayoutItem Caption="Telepon" ColSpanMd="12">
+                     <DxMaskedInput @ref="miTelepon" @bind-Value="@_teleponText"
+                      CssClass="cw-320"
+                      Mask="+00 00000000000" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Seluler 1" ColSpanMd="12">
+                     <DxMaskedInput @ref="miSeluler1" @bind-Value="@_teleponText"
+                      CssClass="cw-320"
+                      Mask="+00 00000000000" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Seluler 2" ColSpanMd="12">
+                     <DxMaskedInput @ref="miSeluler2" @bind-Value="@_teleponText"
+                      CssClass="cw-320"
+                      Mask="+00 00000000000" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Email" ColSpanMd="12">
+                    <DxTextBox @ref="txbEmail" Id="txbEmail" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Lainnya" ColSpanMd="12">
+                    <DxMemo @ref="mmoLainnya" Rows="10" />
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+            <DxFormLayoutGroup Caption="Kerabat yang Bisa Dihubungi dalam Kondisi Darurat" ColSpanMd="6">
+                <DxFormLayoutItem Caption="Nama" ColSpanMd="12">
+                    <DxTextBox @ref="txbNamaKerabat" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Hubungan" ColSpanMd="12">
+                    <DxTextBox @ref="txbHubunganKerabat" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Alamat" ColSpanMd="12">
+                    <DxMemo @ref="mmoAlamatKerabat" Rows="12" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Telepon" ColSpanMd="12">
+                     <DxMaskedInput @ref="miTeleponKerabat" @bind-Value="@_teleponText"
+                      CssClass="cw-320"
+                      Mask="+00 00000000000" />
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+        </DxFormLayoutTabPage>
+        <DxFormLayoutTabPage Caption="Catatan">
+            <DxFormLayoutGroup Caption="Rekening" ColSpanMd="6">
+                <DxFormLayoutItem ColSpanMd="12">
+                    <DxMemo @ref="mmoRekening" Rows="5" />
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+            <DxFormLayoutGroup Caption="Dokumen" ColSpanMd="6">
+                <DxFormLayoutItem Caption="BPJS" ColSpanMd="12">
+                    <DxTextBox @ref="txbBPJS" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="NPWP" ColSpanMd="12">
+                    <DxTextBox @ref="txbNPWP" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Dok. Jaminan" ColSpanMd="12">
+                    <DxTextBox @ref="txbDokJaminan"/>
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+            <DxFormLayoutGroup Caption="Keterangan" ColSpanMd="12">
+                <DxFormLayoutItem ColSpanMd="12">
+                    <DxMemo @ref="mmoKeterangan" Rows="15"/>
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+        </DxFormLayoutTabPage>
+        <DxFormLayoutTabPage Caption="Pengaturan">
+            <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
+                <DxFormLayoutItem Caption="N.I.K" ColSpanMd="12">
+                    <DxTextBox @ref="txbNIK"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Divisi" ColSpanMd="12">
+                    <DxComboBox @ref="cbxDivisi" FilteringMode="DataGridFilteringMode.Contains" EditFormat="{0} {1}" Data="@_cities" @bind-Value="_selectedCities" Id="cbxDivisi">
+                        <DxListEditorColumn FieldName="City"
+                        Caption="Divisi"
+                        />
+                        <DxListEditorColumn FieldName="Code"
+                                            Caption="Code" />
+                    </DxComboBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Jabatan" ColSpanMd="12">
+                    <DxComboBox @ref="cbxJabatan" FilteringMode="DataGridFilteringMode.Contains" EditFormat="{0} {1}" Data="@_cities" @bind-Value="_selectedCities" Id="cbxJabatan">
+                        <DxListEditorColumn FieldName="City"
+                        Caption="Jabatan"
+                        />
+                        <DxListEditorColumn FieldName="Code"
+                                            Caption="Code" />
+                    </DxComboBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Jadwal Kerja" ColSpanMd="12">
+                    <DxComboBox @ref="cbxJadwalKerja" FilteringMode="DataGridFilteringMode.Contains" EditFormat="{0} {1}" Data="@_cities" @bind-Value="_selectedCities" Id="cbxJadwalKerja">
+                        <DxListEditorColumn FieldName="City"
+                        Caption="Jadwal Kerja"
+                        />
+                        <DxListEditorColumn FieldName="Code"
+                                            Caption="Code" />
+                    </DxComboBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Status Login" ColSpanMd="12">
+                    <DxCheckBox Checked="false" @ref="cbStatusLogin">Diperbolehkan Login</DxCheckBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="User Name" ColSpanMd="12">
+                    <DxTextBox @ref="txbUserName" Enabled="false"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="User Password" ColSpanMd="8">
+                    <DxTextBox @ref="txbUserPassword" Enabled="false"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem ColSpanMd="4">
+                    <DxButton Text="Reset"></DxButton>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Status" ColSpanMd="12">
+                    <DxCheckBox Checked="false" @ref="cbStatus">Aktif</DxCheckBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Tanggal Berhenti" ColSpanMd="12">
+                    <DxDateEdit @ref="@dteTanggalBerhenti" Date="@DateTime.Today"></DxDateEdit>
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+            <DxFormLayoutGroup Caption="Rangkap Jabatan" ColSpanMd="6">
+                <DevExpress.Blazor.Internal.DxCard>
+                    <DevExpress.Blazor.Internal.DxCardBody>
+                        <rclPantheon.Controls.PthGridView @ref="gvJabatan" Grid_EditSimpan="gvJabatan_Simpan" Grid_EditHapus="gvJabatan_Hapus" dsGv="@_jabatan">
+                           <gvColumn>
+                               <DxGridDataColumn FieldName="Jabatan" Caption="Jabatan" Visible="true">
+                                   <CellEditTemplate>
+                                       <DxComboBox Data="@_cities" TextFieldName="@nameof(Cities.City)" Value="@_jabatanDipilih" ValueExpression="@(() => _jabatanDipilih)" ValueChanged="((Cities e) => PilihJabatan(e))"></DxComboBox>
+                                   </CellEditTemplate>
+                               </DxGridDataColumn>
+                               <DxGridDataColumn FieldName="Code" Caption="Code" Visible="true">
+                                   <CellEditTemplate>
+                                        <RadzenLabel Text="@_jabatanDipilih.Code"></RadzenLabel>
+                                   </CellEditTemplate>
+                               </DxGridDataColumn>
+
+                           </gvColumn>
+                        </rclPantheon.Controls.PthGridView>
+                    </DevExpress.Blazor.Internal.DxCardBody>
+                </DevExpress.Blazor.Internal.DxCard>
+            </DxFormLayoutGroup>
+            <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
+            </DxFormLayoutGroup>
+            <DxFormLayoutGroup Caption="Cetak QR" ColSpanMd="6">
+                <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
+                    <DxFormLayoutItem Caption="Prefix" CaptionPosition="CaptionPosition.Vertical" ColSpanMd="12">
+                    <DxTextBox @ref="txbPrefix"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Code" CaptionPosition="CaptionPosition.Vertical" ColSpanMd="12">
+                    <DxTextBox @ref="txbCode"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Suffix" CaptionPosition="CaptionPosition.Vertical" ColSpanMd="12">
+                    <DxTextBox @ref="txbSuffix"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Separator" CaptionPosition="CaptionPosition.Vertical" ColSpanMd="12">
+                    <DxTextBox @ref="txbSeparator"></DxTextBox>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem CaptionPosition="CaptionPosition.Vertical" ColSpanMd="12">
+                    <DxButton Text="Cetak"></DxButton>
+                </DxFormLayoutItem>
+                </DxFormLayoutGroup>
+                <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
+                    <DxFormLayoutItem ColSpanMd="12">
+                        @*<div style="height:5vh !important;">
+                            @{
+                                var x = filesBase64.FirstOrDefault();
+                                    <img src="data:@x.contentType;base64,@x.base64data" height="60" />
+                            }
+                        </div>*@
+                            <div class="card" style="width: 10vw;padding-top:6vh !important;">
+                            @{
+                                //var x = filesBase64.FirstOrDefault();
+                                //<img class="card-img-top" src="data:@x.contentType;base64,@x.base64data">
+                            }
+                            </div>
+                    </DxFormLayoutItem>
+                </DxFormLayoutGroup>
+            </DxFormLayoutGroup>
+        </DxFormLayoutTabPage>
+    </DxFormLayoutTabPages>
+</DxFormLayout>
+
+@code {
+    DxFormLayout? frmLayout { get; set; } = new();
+    DxTextBox? txbNamaLengkap { get; set; } = new();
+    DxTextBox? txbNamaPanggilan { get; set; } = new();
+    DxTextBox? txbTempatLahir { get; set; } = new();
+    DxDateEdit<DateTime>? dteTanggalLahir { get; set; } = new();
+    DxDateEdit<DateTime>? dteTanggalRekrut { get; set; } = new();
+    DxTextBox? txbUsia { get; set; } = new();
+    DxTextBox? txbNoIdentitas1 { get; set; } = new();
+    DxTextBox? txbNoIdentitas2 { get; set; } = new();
+    DxTextBox? txbLamaKerja { get; set; } = new();
+
+    DxTextBox? txbAlamatDaerahAsal { get; set; } = new();
+    DxComboBox<Cities, Cities>? cbxKotaAsal { get; set; } = new();
+    DxComboBox<Cities, Cities>? cbxKecamatanAsal { get; set; } = new();
+    DxComboBox<Cities, Cities>? cbxKelurahanAsal { get; set; } = new();
+    DxTextBox? txbKodePosDaerahAsal { get; set; } = new();
+    DxTextBox? txbProvinsiAsal { get; set; } = new();
+
+    DxTextBox? txbAlamatDaerahTinggal { get; set; } = new();
+    DxComboBox<Cities, Cities>? cbxKotaTinggal { get; set; } = new();
+    DxComboBox<Cities, Cities>? cbxKecamatanTinggal { get; set; } = new();
+    DxComboBox<Cities, Cities>? cbxKelurahanTinggal { get; set; } = new();
+    DxTextBox? txbKodePosDaerahTinggal { get; set; } = new();
+    DxTextBox? txbProvinsiTinggal { get; set; } = new();
+
+    DxMaskedInput<string>? miTelepon { get; set; } = new();
+    DxMaskedInput<string>? miSeluler1 { get; set; } = new();
+    DxMaskedInput<string>? miSeluler2 { get; set; } = new();
+    DxTextBox? txbEmail { get; set; } = new();
+    DxMemo? mmoLainnya { get; set; } = new();
+
+    DxTextBox? txbNamaKerabat { get; set; } = new();
+    DxTextBox? txbHubunganKerabat { get; set; } = new();
+    DxMemo? mmoAlamatKerabat { get; set; } = new();
+    DxMaskedInput<string>? miTeleponKerabat { get; set; } = new();
+
+    DxMemo? mmoRekening { get; set; } = new();
+    DxTextBox? txbBPJS { get; set; } = new();
+    DxTextBox? txbNPWP { get; set; } = new();
+    DxTextBox? txbDokJaminan { get; set; } = new();
+    DxMemo? mmoKeterangan { get; set; } = new();
+
+    DxTextBox? txbNIK { get; set; } = new();
+    DxComboBox<Cities, Cities>? cbxDivisi { get; set; } = new();
+    DxComboBox<Cities, Cities>? cbxJabatan { get; set; } = new();
+    DxComboBox<Cities, Cities>? cbxJadwalKerja { get; set; } = new();
+    DxCheckBox<bool>? cbStatusLogin { get; set; } = new();
+    DxTextBox? txbUserName { get; set; } = new();
+    DxTextBox? txbUserPassword { get; set; } = new();
+    DxCheckBox<bool>? cbStatus { get; set; } = new();
+    DxDateEdit<DateTime>? dteTanggalBerhenti { get; set; } = new();
+
+    PthGridView<t5Jabatan> gvJabatan { get; set; } = new();
+    DxTextBox? txbPrefix { get; set; } = new();
+    DxTextBox? txbCode { get; set; } = new();
+    DxTextBox? txbSuffix { get; set; } = new();
+    DxTextBox? txbSeparator { get; set; } = new();
+
+    int ActiveTabIndex { get; set; } = 0;
+    string _teleponText = "";
+
+    List<Cities> _cities = new();
+    Cities _selectedCities = new();
+
+    List<t5Jabatan> _jabatan = new();
+    Cities _jabatanDipilih = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cities.Add(new Cities
+            {
+                Code = "D",
+                City = "ABC"
+            });
+        _cities.Add(new Cities
+            {
+                Code = "X",
+                City = "AYZ"
+            });
+    }
+    List<ImageFile> filesBase64 = new List<ImageFile>();
+    string message = "InputFile";
+    bool isDisabled = false;
+    async Task OnChange(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles(); // get the files selected by the users
+        foreach (var file in files)
+        {
+            var resizedFile = await file.RequestImageFileAsync(file.ContentType, 640, 480); // resize the image file
+            var buf = new byte[resizedFile.Size]; // allocate a buffer to fill with the file's data
+            using (var stream = resizedFile.OpenReadStream())
+            {
+                await stream.ReadAsync(buf); // copy the stream to the buffer
+            }
+            filesBase64.Add(new ImageFile { base64data = Convert.ToBase64String(buf), contentType = file.ContentType, fileName = file.Name }); // convert to a base64 string!!
+        }
+        message = "Click UPLOAD to continue";
+    }
+    async Task Upload()
+    {
+        isDisabled = true;
+        filesBase64.Clear();
+    }
+    public class ImageFile
+    {
+        public string base64data { get; set; }
+        public string contentType { get; set; }
+        public string fileName { get; set; }
+    }
+    public class Cities
+    {
+        public string City { get; set; }
+        public string Code { get; set; }
+    }
+    public class t5Jabatan
+    {
+        public string Code { get; set; }
+        public string Jabatan { get; set; }
+    }
+
+    #region gvJabatan
+    void PilihJabatan(Cities e)
+    {
+        _jabatanDipilih = e;
+    }
+    async Task gvJabatan_Simpan(GridEditModelSavingEventArgs e)
+    {
+        var data = new t5Jabatan{Code = _jabatanDipilih.Code, Jabatan = _jabatanDipilih.City};
+        if (e.IsNew)
+            _jabatan.Add(data);
+        else
+        {
+            var x = _jabatan.FirstOrDefault(e => e.Code == data.Code);
+            _jabatan.Remove(x);
+            _jabatan.Add(data);
+        }
+    }
+    async Task gvJabatan_Hapus(GridDataItemDeletingEventArgs e)
+    {
+        var data = e.DataItem as t5Jabatan;
+        var x = _jabatan.FirstOrDefault(e => e.Code == data.Code);
+        _jabatan.Remove(x);
+    }
+    #endregion
+}
+
+<style>
+    .input-label{
+        cursor:pointer;
+        margin-top:15%;
+    }
+    #overviewDemoDropZone{
+        height:20vh !important;
+        width: 31vw !important;
+    }
+    .img-preview{
+        padding-bottom: 2vh !important;
+    }
+    .card{
+        border: none;
+    }
+
+    .card-header{
+        border-bottom:none;
+    }
+    .custom-background{
+        background-color: transparent;
+        margin-top: -3vh;
+    }
+</style>
