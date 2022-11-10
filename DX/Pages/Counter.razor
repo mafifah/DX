@@ -1,16 +1,82 @@
 ﻿@page "/counter"
-
-<h1>Counter</h1>
-
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<style>
+    .custom-button{
+        padding-left: 10.5vw;
+        float:right;
+    }
+    @@media (max-width: 768px) {
+        .custom-button{
+           margin-left: -6vh !important;
+        }
+    }
+</style>
+<DxFormLayout CssClass="w-80">
+<DxFormLayoutGroup ColSpanMd="18">
+        <HeaderTemplate>
+            <div class="row">
+                <div class="col-md-8">
+                    Test XYZ ABC DEFG
+                </div>
+                <div class="col-md-4 custom-button">
+                    <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Data Baru" aria-label="Left Align">
+                     <span class="fa fa-solid fa-plus" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus" aria-label="Left Align">
+                     <span class="fa fa-solid fa-trash" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Simpan" aria-label="Left Align">
+                     <span class="fa fa-solid fa-check" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Cetak" aria-label="Left Align">
+                     <span class="fa fa-solid fa-print" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Batal" aria-label="Left Align">
+                     <span class="fa fa-close" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </HeaderTemplate>
+        <Items>
+            <DxFormLayoutItem Caption="Position:" ColSpanMd="18">
+                <DxTextBox @bind-Text="@Position" Enabled="!Unemployed" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem Caption="Hire Date:" ColSpanMd="18">
+                <DxDateEdit @bind-Date="@HireDate" Enabled="!Unemployed" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem Caption="Notes:" ColSpanMd="18">
+                <DxTextBox @bind-Text="@Notes" Enabled="!Unemployed" />
+            </DxFormLayoutItem>
+        </Items>
+    </DxFormLayoutGroup>
+</DxFormLayout>
+<div class="row w-80 mx-0">
+    <p class="demo-text col-18 mt-8">
+        @nameof(FirstName)=<b>@FirstName</b>,
+        @nameof(LastName)=<b>@LastName</b>,
+        @nameof(BirthDate)=<b>@BirthDate</b>
+    </p>
+</div>
+<div class="row w-80 mx-0">
+    <p class="demo-text col-18 mt-8">
+        @nameof(Position)=<b>@Position</b>,
+        @nameof(HireDate)=<b>@HireDate</b>,
+        @nameof(Notes)=<b>@Notes</b>
+    </p>
+</div>
 
 @code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
-    {
-        currentCount++;
+    string FirstName { get; set; } = "Nancy";
+    string LastName { get; set; } = "Davolio";
+    DateTime BirthDate { get; set; } = DateTime.Now.AddYears(-80);
+    string Position { get; set; } = "Sales Representative";
+    DateTime? HireDate { get; set; } = DateTime.Now.AddYears(-80);
+    string Notes { get; set; } = "Education includes a BA in psychology.";
+    bool Unemployed { get; set; }
+    void UnemployedChanged(bool value) {
+        if(value) {
+            Position = Notes = null;
+            HireDate = null;
+        }
+        Unemployed = value;
     }
 }
