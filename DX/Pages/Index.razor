@@ -42,38 +42,67 @@
                 </DxFormLayoutItem>
             </DxFormLayoutGroup>
             <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
-                <DxFormLayoutItem>
                     <div class="img-preview">
+
+                        <div>
+                            <left>
+                                <label>
+                                    <RadzenIcon Icon="accessibility" IconStyle="IconStyle.Primary"/>
+                                    Pilih Gambar
+                                    <InputFile hidden="true" class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="inputFile" />
+                                </label>
+                            </left>
+                        </div>
+
+                        <style>
+                            .textBoxGambar
+                            {
+                            margin-top: 5px;
+                            padding-left: 5px;
+                            padding-right: 5px;
+                            margin-bottom: 5px;
+                            }
+                        </style>
+
                         @{
                             var x = 0;
                             foreach (var item in filesBase64)
                             {
+
                                 x = x + 1;
-                                <p>Data ke-@x</p>
-                                <img src="data:@item.contentType;base64,@item.base64data" height="100" />
+                                <div style="border:solid 2px #aaaa; margin:10px; border-radius:5px;">
+                                <right>
+                                    <i style="margin:10px" class="fa-solid fa-xmark"></i>
+                                    <i class="fa-solid fa-pen"></i>
+                                </right>
+                                <center>
+                                    <p>Data ke-@x</p>
+                                </center>
+                                <DxFormLayoutItem ColSpanMd="12">
+                                <center >
+                                    <img src="data:@item.contentType;base64,@item.base64data" height="100" />
+
+                                </center>
+                                </DxFormLayoutItem>
+                                <DxFormLayoutItem CssClass="textBoxGambar" ColSpanMd="12">
+                                    <DxMemo  NullText="Keteragan" />
+                                    <DxTextBox NullText="Kategori"/>
+                                </DxFormLayoutItem>
+                                </div>
                             }
                         }
                     </div>
+                </DxFormLayoutGroup>
+                
                     @*<div class="input-group">*@
                     @*<div class="custom-file">
                             <InputFile class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="inputFile" />
                         </div>*@
-                        <div id="overviewDemoDropZone" class="card custom-drop-zone bg-light rounded-3 w-100 m-0">
-                            <center>
-                                <span class="drop-file-icon mb-3"></span>
-                                <label class="input-label" for="inputFile">
-                                    Pilih Gambar
-                                    <InputFile hidden="true" class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="inputFile" />
-                                </label>
-                            </center>
 
-                        </div>
                     @*<div class="input-group-append">
                             <button class="btn btn-success" @onclick="Upload" disabled="@isDisabled">Upload</button>
                         </div>*@
                     @*</div>*@
-                </DxFormLayoutItem>
-            </DxFormLayoutGroup>
         </DxFormLayoutTabPage>
         <DxFormLayoutTabPage Caption="Komunikasi">
             <DxFormLayoutGroup Caption="Daerah Asal" ColSpanMd="6">
