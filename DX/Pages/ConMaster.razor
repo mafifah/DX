@@ -1,0 +1,62 @@
+﻿@page "/conmaster"
+@using DX.Data;
+@using Newtonsoft.Json.Linq
+@inject WeatherForecastService svc
+<RadzenProgressBar Value="1500" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Light" Mode="ProgressBarMode.Indeterminate" Visible="@IsLoading" />
+<RadzenSplitter Orientation="Radzen.Orientation.Horizontal" Collapse=@OnCollapse Expand=@OnExpand style="height: max-content; border: 0px solid rgba(0,0,0,.08);">
+    <RadzenSplitterPane Size="30%" Min="10px">
+        <div style="max-height:80%">
+            <DxGrid @ref="@Grid" Data="@dsRekapitulasi" ShowFilterRow="true" AllowSelectRowByClick="true" ColumnResizeMode="GridColumnResizeMode.NextColumn"
+                            SelectionMode="GridSelectionMode.Single"
+                            AllowSort="true"
+                            CssClass="mw-1100 customGrid">
+                            <Columns>
+                                <DxGridDataColumn FieldName="Date" DisplayFormat="D" />
+                                <DxGridDataColumn FieldName="TemperatureC" Caption="@("Temp. (\x2103)")" Width="120px" />
+                                <DxGridDataColumn FieldName="TemperatureF" Caption="@("Temp. (\x2109)")" Width="120px" />
+                            </Columns>
+            </DxGrid>
+        </div>
+        <div class="card" style="width: 100%; align-items:end;">
+              <div class="card-body">
+                <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Data Baru" aria-label="Left Align">
+                         <span class="fa fa-solid fa-plus" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus" aria-label="Left Align">
+                         <span class="fa fa-solid fa-trash" aria-hidden="true"></span>
+                </button>
+              </div>
+        </div>   
+    </RadzenSplitterPane>
+    <RadzenSplitterPane Style="height:80vh">
+        <h5 style="padding:5px;">Test</h5>
+    </RadzenSplitterPane>
+</RadzenSplitter>
+<style>
+    .parent {
+        position: relative;
+    }
+
+    .bottom {
+        position: absolute; /* Set div position to relative */
+        width:100%;
+    }
+
+</style>
+@code {
+    IGrid Grid { get; set; }
+    public bool IsLoading { get; set; }
+    public List<WeatherForecast> dsRekapitulasi { get; set; } = new();
+    protected override async Task OnInitializedAsync()
+    {
+        dsRekapitulasi.AddRange(await svc.GetForecastAsync(DateTime.Now));
+    }
+    void OnCollapse(RadzenSplitterEventArgs args)
+    {
+    }
+    void OnExpand(RadzenSplitterEventArgs args)
+    {
+    }
+
+}
+
