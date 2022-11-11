@@ -7,11 +7,55 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <DxButton Id="flyout-overview-target-container" RenderStyle="ButtonRenderStyle.Secondary" Click="() => IsOpen = !IsOpen">AUTO</DxButton>
         </div>
+                <DxFlyout @bind-IsOpen=IsOpen
+                  PositionTarget="#flyout-overview-target-container"
+                  RestrictionTarget="#Navigation-Flyout-Overview"
+                  FitToRestriction=true
+                  CloseMode="FlyoutCloseMode.Close"
+                  FooterVisible="true"
+                  FooterCssClass="custom-flyout-footer"
+                  Position="FlyoutPosition.Bottom"
+                  Width="max(25vw, 250px)"
+                  PreventCloseOnPositionTargetClick="true">
 
+                  <BodyTemplate>
+                <div>
+                    <div class="custom-flyout-footer">
+                            <table  style="padding:2px !important">
+                                <tr>
+                                    <th rowspan="2">
+                                        <RadzenImage Style="height:100px;" Path="https://plumbr.io/app/uploads/2015/01/thread-lock.jpeg" />
+                                    </th>
+                                    <td>
+                                        <RadzenLabel Text="Auto" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Profil Saya" />
+                                    </td>
+                                </tr>
+                            </table>
+                    </div>
+                </div>
+                </BodyTemplate>
+                <FooterTemplate>
+
+                </FooterTemplate>
+        </DxFlyout>
         <article class="content px-4">
             @Body
         </article>
+
     </main>
+
 </div>
+
+
+
+
+@code {
+    bool IsOpen { get; set; } = false;
+}
