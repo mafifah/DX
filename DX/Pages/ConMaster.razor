@@ -5,25 +5,61 @@
 <RadzenProgressBar Value="1500" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Light" Mode="ProgressBarMode.Indeterminate" Visible="@IsLoading" />
 <RadzenSplitter Orientation="Radzen.Orientation.Horizontal" Collapse=@OnCollapse Expand=@OnExpand style="height: max-content; border: 0px solid rgba(0,0,0,.08);">
     <RadzenSplitterPane Size="30%" Min="10px">
-        <div style="max-height:80%">
-            <DxGrid @ref="@Grid" Data="@dsRekapitulasi" ShowFilterRow="true" AllowSelectRowByClick="true" ColumnResizeMode="GridColumnResizeMode.NextColumn"
-                            SelectionMode="GridSelectionMode.Single"
-                            AllowSort="true"
-                            CssClass="mw-1100 customGrid">
-                            <Columns>
-                                <DxGridDataColumn FieldName="Date" DisplayFormat="D" />
-                                <DxGridDataColumn FieldName="TemperatureC" Caption="@("Temp. (\x2103)")" Width="120px" />
-                                <DxGridDataColumn FieldName="TemperatureF" Caption="@("Temp. (\x2109)")" Width="120px" />
-                            </Columns>
+        <div hidden="@hideRekapitulasi">
+            <DxGrid Data="@_dsRekapitulasi"
+                PageSize="30"
+                CssClass="ch-360">
+                <Columns>
+                    <DxGridDataColumn FieldName="TemperatureC" Caption="@("Temp. (\x2103)")"/>
+                    <DxGridDataColumn FieldName="TemperatureF" Caption="@("Temp. (\x2109)")"/>
+                    <DxGridDataColumn FieldName="Summary" Caption="Summary" />
+                </Columns>
             </DxGrid>
         </div>
-        <div class="card" style="width: 100%; align-items:end;">
-              <div class="card-body">
-                <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Data Baru" aria-label="Left Align">
-                         <span class="fa fa-solid fa-plus" aria-hidden="true"></span>
+        <div hidden="@hideKonfigurasi" class="konfigurasi">
+                <div>
+                    <span style="font-size:small; color:gray">Pengaturan Form</span>
+                    <DxGrid Data="@_konfigurasi"
+                        PageSize="30">
+                        <Columns>
+                            <DxGridDataColumn FieldName="Nama"/>
+                            <DxGridDataColumn FieldName="Value" Caption="Tampilan">
+                                <CellDisplayTemplate>
+                                    <DxSpinEdit MinValue="0" MaxValue="30" ValueChanged="@((int value) => UbahFontSize(value))"></DxSpinEdit>
+                                </CellDisplayTemplate>
+                             </DxGridDataColumn>
+                        </Columns>
+                    </DxGrid>
+                </div>
+                <br/><br/><br/>
+                <div>
+                    <span style="font-size:small; color:gray">Pengaturan Cetak</span>
+                    <DxGrid Data="@_cetak"
+                        PageSize="30">
+                        <Columns>
+                            <DxGridDataColumn FieldName="Dokumen"/>
+                            <DxGridDataColumn FieldName="P" Caption="P">
+                                <CellDisplayTemplate>
+                                    <DxCheckBox Checked="false"></DxCheckBox>
+                                </CellDisplayTemplate>
+                             </DxGridDataColumn>
+                             <DxGridDataColumn FieldName="Monitor"/>
+                            <DxGridDataColumn FieldName="J" Caption="J">
+                                <CellDisplayTemplate>
+                                    <DxSpinEdit MinValue="0" MaxValue="10"></DxSpinEdit>
+                                </CellDisplayTemplate>
+                             </DxGridDataColumn>
+                        </Columns>
+                    </DxGrid>
+                </div>
+        </div>
+        <div class="card navigasi-rekapitulasi">
+              <div class="card-body" style="align-items:end">
+                <button type="button" class="btn btn-default @isRekapitulasiAktif" @onclick="TampilRekapitulasi" data-toggle="tooltip" data-placement="top" title="Rekapitulasi" aria-label="Left Align">
+                         <span class="fa fa-regular fa-file-lines" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus" aria-label="Left Align">
-                         <span class="fa fa-solid fa-trash" aria-hidden="true"></span>
+                <button type="button" class="btn btn-default @isSettingAktif"  @onclick="TampilKonfigurasi" data-toggle="tooltip" data-placement="top" title="Settings" aria-label="Left Align">
+                         <span class="fa fa-solid fa-gear" aria-hidden="true"></span>
                 </button>
               </div>
         </div>   
@@ -41,21 +77,101 @@
         position: absolute; /* Set div position to relative */
         width:100%;
     }
+    .navigasi-rekapitulasi {
+        position: sticky; /* Set div position to relative */
+        width:100%;
+        align-items:end;
+    }
+    .ch-360 {
+        height: 80vh;
+    }
 
+    .konfigurasi{
+        height: 80vh;
+    }
+
+    @@media (max-width: 801px) {
+        .dxbs-grid{
+           height: 64vh !important;
+        }
+
+        .konfigurasi{
+            height:64vh !important;
+        }
+
+    }
 </style>
 @code {
+    string isRekapitulasiAktif = "btn-secondary";
+    string isSettingAktif = "";
+    bool hideRekapitulasi = false;
+    bool hideKonfigurasi = true;
     IGrid Grid { get; set; }
     public bool IsLoading { get; set; }
-    public List<WeatherForecast> dsRekapitulasi { get; set; } = new();
+    private int fontSize = 12;
+    private List<WeatherForecast> _dsRekapitulasi { get; set; } = new();
+    private List<Konfigurasi> _konfigurasi { get; set; } = new();
+    private List<PengaturanCetak> _cetak { get; set; } = new();
     protected override async Task OnInitializedAsync()
     {
-        dsRekapitulasi.AddRange(await svc.GetForecastAsync(DateTime.Now));
+        _dsRekapitulasi.AddRange(await svc.GetForecastAsync(DateTime.Now));
+        _konfigurasi.Add(new Konfigurasi
+        {
+            Nama = "Skin Name",
+            Value = 0,
+        });
+        _konfigurasi.Add(new Konfigurasi
+        {
+            Nama = "Increase Font Size",
+            Value = 1,
+        });
+        _cetak.Add(new PengaturanCetak
+        {
+            Dokumen = "Rekapitulasi",
+            P = true,
+            J = 1,
+        });
+    }
+
+    void TampilRekapitulasi()
+    {
+        isSettingAktif = "";
+        isRekapitulasiAktif = "btn-secondary";
+        hideRekapitulasi = false;
+        hideKonfigurasi = true;
+
+    }
+
+    void TampilKonfigurasi()
+    {
+        isSettingAktif = "btn-secondary";
+        isRekapitulasiAktif = "";
+        hideRekapitulasi = true;
+        hideKonfigurasi = false;
+    }
+
+    void UbahFontSize(int size){
+
     }
     void OnCollapse(RadzenSplitterEventArgs args)
     {
     }
     void OnExpand(RadzenSplitterEventArgs args)
     {
+    }
+
+    public class Konfigurasi
+    {
+        public string Nama { get; set; }
+        public int Value { get; set; }
+    }
+
+    public class PengaturanCetak
+    {
+        public string Dokumen { get; set; }
+        public bool P { get; set; }
+        public string Monitor { get; set; }
+        public int J { get; set; }
     }
 
 }
