@@ -4,7 +4,8 @@
     <DxFormLayoutItem Caption="Nama Lengkap" ColSpanMd="6">
         <DxTextBox @ref="@txbNamaLengkap" Id="Name" />
     </DxFormLayoutItem>
-    <DxFormLayoutTabPages @bind-ActiveTabIndex="@ActiveTabIndex" RenderMode="TabsRenderMode.OnDemand" ScrollMode="TabsScrollMode.Auto">
+    <DxFormLayoutTabPages @bind-ActiveTabIndex="@ActiveTabIndex"
+                          RenderMode="TabsRenderMode.OnDemand" ScrollMode="TabsScrollMode.Auto">
         <DxFormLayoutTabPage Caption="Identitas">
             <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
                 <DxFormLayoutItem Caption="Nama Panggilan" ColSpanMd="12">
@@ -40,60 +41,76 @@
                     <DxTextBox @ref="@txbLamaKerja"></DxTextBox>
                 </DxFormLayoutItem>
             </DxFormLayoutGroup>
-            <DxFormLayoutGroup ColSpanMd="6" CssClass="scrollable">
-                    <HeaderTemplate>
-                        <div class="row">
-                            <div class="col-md-8">
-                                
-                            </div>
-                            <div class="col-md-4 custom-button">
+            <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
+                    <div class="img-preview">
+
+                        <div>
+                            <left>
                                 <label>
-                                    <span class="fa fa-solid fa-plus" aria-hidden="true"></span>
+                                    <RadzenIcon Icon="accessibility" IconStyle="IconStyle.Primary"/>
+                                    Pilih Gambar
                                     <InputFile hidden="true" class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="inputFile" />
                                 </label>
-                            </div>
+                            </left>
                         </div>
-                    </HeaderTemplate>
-                    <Items>
-                        <DxAccordion>
-                            <Items>
-                            @{
-                                foreach (var item in _gambar)
-                                {
-                                    <DxAccordionItem>
-                                        <HeaderTextTemplate>
-                                            <div class="flex-grow-1">
-                                                @($"Data ke-{_gambar.IndexOf(item)+1} dari {_gambar.Count()}")
-                                            </div>
-                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus" aria-label="Left Align">
-                                                <span class="fa fa-solid fa-pen" aria-hidden="true"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus" aria-label="Left Align">
-                                                <span class="fa fa-solid fa-trash" aria-hidden="true"></span>
-                                            </button>
-                                        </HeaderTextTemplate>
-                                        <ContentTemplate>
-                                                <DxFormLayout>
-                                                    <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
-                                                            <img class="img-preview" src="data:@item.contentType;base64,@item.base64data" width="100" />
-                                                    </DxFormLayoutGroup>
-                                                    <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
-                                                        <DxFormLayoutItem Context="txbContext" Caption="Kategori" CaptionPosition="CaptionPosition.Vertical" ColSpanMd="12">
-                                                            <DxTextBox @bind-Text="@item.Kategori"/>
-                                                        </DxFormLayoutItem>
-                                                                <DxFormLayoutItem Context="mmoContext" Caption="Keterangan" CaptionPosition="CaptionPosition.Vertical" ColSpanMd="12">
-                                                            <DxMemo Rows="5" @bind-Text="@item.Keterangan"/>
-                                                        </DxFormLayoutItem>
-                                                    </DxFormLayoutGroup>
-                                                </DxFormLayout>
-                                        </ContentTemplate>
-                                    </DxAccordionItem>
-                                }
+
+                        <style>
+                            .textBoxGambar
+                            {
+                            margin-top: 5px;
+                            padding-left: 5px;
+                            padding-right: 5px;
+                            margin-bottom: 5px;
                             }
-                            </Items>
-                        </DxAccordion>
-                    </Items>
-            </DxFormLayoutGroup>
+
+                            .card_image:hover
+                            {
+                            transition: opacity 0.5s ease-in-out 0s;
+                            transform: scale(1.05);
+                            box-shadow: 0px 10px 20px 2px rgba(0, 0, 0, 0.25);
+                            }
+
+                        </style>
+
+                        @{
+                            var x = 0;
+                            foreach (var item in filesBase64)
+                            {
+
+                                x = x + 1;
+                            <div class="card_image" style="border:solid 2px #aaaa;box-shadow:2px 2px 2px 2px #dedad9; margin:10px; border-radius:5px;">
+                                <right>
+                                    <i style="margin:10px" class="fa-regular fa-xmark"></i>
+                                    <i class="fa-regular fa-pen"></i>
+                                </right>
+                                <center>
+                                    <p>Data ke-@x</p>
+                                </center>
+                                <DxFormLayoutItem ColSpanMd="12">
+                                <center >
+                                    <img src="data:@item.contentType;base64,@item.base64data" height="100" />
+
+                                </center>
+                                </DxFormLayoutItem>
+                                <DxFormLayoutItem CssClass="textBoxGambar" ColSpanMd="12">
+                                    <DxMemo  NullText="Keteragan" />
+                                    <DxTextBox NullText="Kategori"/>
+                                </DxFormLayoutItem>
+                                </div>
+                            }
+                        }
+                    </div>
+                </DxFormLayoutGroup>
+                
+                    @*<div class="input-group">*@
+                    @*<div class="custom-file">
+                            <InputFile class="custom-file-input" multiple OnChange="OnChange" accept="image/png, image/jpeg, image/gif" id="inputFile" />
+                        </div>*@
+
+                    @*<div class="input-group-append">
+                            <button class="btn btn-success" @onclick="Upload" disabled="@isDisabled">Upload</button>
+                        </div>*@
+                    @*</div>*@
         </DxFormLayoutTabPage>
         <DxFormLayoutTabPage Caption="Komunikasi">
             <DxFormLayoutGroup Caption="Daerah Asal" ColSpanMd="6">
@@ -400,7 +417,7 @@
     DxCheckBox<bool>? cbStatus { get; set; } = new();
     DxDateEdit<DateTime>? dteTanggalBerhenti { get; set; } = new();
 
-    PthGridView<T5Jabatan> gvJabatan { get; set; } = new();
+    PthGridView<t5Jabatan> gvJabatan { get; set; } = new();
     DxTextBox? txbPrefix { get; set; } = new();
     DxTextBox? txbCode { get; set; } = new();
     DxTextBox? txbSuffix { get; set; } = new();
@@ -412,7 +429,7 @@
     List<Cities> _cities = new();
     Cities _selectedCities = new();
 
-    List<T5Jabatan> _jabatan = new();
+    List<t5Jabatan> _jabatan = new();
     Cities _jabatanDipilih = new();
 
     protected override async Task OnInitializedAsync()
@@ -428,7 +445,9 @@
                 City = "AYZ"
             });
     }
-    List<T5Gambar> _gambar = new();
+    List<ImageFile> filesBase64 = new List<ImageFile>();
+    string message = "InputFile";
+    bool isDisabled = false;
     async Task OnChange(InputFileChangeEventArgs e)
     {
         var files = e.GetMultipleFiles(); // get the files selected by the users
@@ -440,23 +459,27 @@
             {
                 await stream.ReadAsync(buf); // copy the stream to the buffer
             }
-            _gambar.Add(new T5Gambar { base64data = Convert.ToBase64String(buf), contentType = file.ContentType, fileName = file.Name }); // convert to a base64 string!!
+            filesBase64.Add(new ImageFile { base64data = Convert.ToBase64String(buf), contentType = file.ContentType, fileName = file.Name }); // convert to a base64 string!!
         }
+        message = "Click UPLOAD to continue";
     }
-    public class T5Gambar
+    async Task Upload()
+    {
+        isDisabled = true;
+        filesBase64.Clear();
+    }
+    public class ImageFile
     {
         public string base64data { get; set; }
         public string contentType { get; set; }
         public string fileName { get; set; }
-        public string Kategori { get; set; }
-        public string Keterangan { get; set; }
     }
     public class Cities
     {
         public string City { get; set; }
         public string Code { get; set; }
     }
-    public class T5Jabatan
+    public class t5Jabatan
     {
         public string Code { get; set; }
         public string Jabatan { get; set; }
@@ -469,7 +492,7 @@
     }
     async Task gvJabatan_Simpan(GridEditModelSavingEventArgs e)
     {
-        var data = new T5Jabatan { Code = _jabatanDipilih.Code, Jabatan = _jabatanDipilih.City };
+        var data = new t5Jabatan{Code = _jabatanDipilih.Code, Jabatan = _jabatanDipilih.City};
         if (e.IsNew)
             _jabatan.Add(data);
         else
@@ -481,7 +504,7 @@
     }
     async Task gvJabatan_Hapus(GridDataItemDeletingEventArgs e)
     {
-        var data = e.DataItem as T5Jabatan;
+        var data = e.DataItem as t5Jabatan;
         var x = _jabatan.FirstOrDefault(e => e.Code == data.Code);
         _jabatan.Remove(x);
     }
@@ -493,9 +516,12 @@
         cursor:pointer;
         margin-top:15%;
     }
+    #overviewDemoDropZone{
+        height:20vh !important;
+        width: 31vw !important;
+    }
     .img-preview{
         padding-bottom: 2vh !important;
-        padding-top: 4vh;
     }
     .card{
         border: none;
@@ -507,40 +533,5 @@
     .custom-background{
         background-color: transparent;
         margin-top: -3vh;
-    }
-    .custom-button{
-        padding-left: 10.5vw;
-        float:right;
-    }
-    .textBoxGambar
-    {
-        margin-top: 5px;
-        padding-left: 5px;
-        padding-right: 5px;
-        margin-bottom: 5px;
-    }
-    .scrollable {  
-        overflow-y: auto;  
-        height: 50%;  
-    }  
-    @@media (max-width: 768px) {
-        .custom-button{
-           margin-left: -6vh !important;
-        }
-    }
-    label[data-title]{
-      position: relative;
-      &:hover:after{
-        font-size: 1rem;
-        font-weight: normal;
-        display: block;
-        position: absolute;
-        left: -8em;
-        bottom: 2em;
-        content:  attr(data-title);
-        background-color: white;
-        width: 20em;
-        text-align: center;
-      }
     }
 </style>

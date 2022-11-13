@@ -1,18 +1,17 @@
-﻿@page "/counter"
-<style>
-    .custom-button {
-        padding-left: 10.5vw;
-        float: right;
-    }
+﻿@page "/pagesize"
+<RadzenLabel @ref="@radzenTitle" Style="@radzenTitle.Style" Text="Title" />
 
-    @@media (max-width: 768px) {
-        .custom-button {
-            margin-left: -6vh !important;
-        }
-    }
-</style>
-<DxFormLayout CssClass="w-80">
-    <DxFormLayoutGroup ColSpanMd="18">
+
+<RadzenLabel @ref="@radzenLabel" Style="@radzenLabel.Style" Text="Halo Dunia" />
+
+@*<RadzenButton Click="@NaikkanFont"  Text ="Increase"/>
+*@
+<DxSpinEdit ValueChanged="((int e) => NaikkanFont(e))" BindValueMode="BindValueMode.OnInput" @ref="@speGrade"></DxSpinEdit>
+
+
+
+<DxFormLayout @ref="@dxFormLayout">
+    <DxFormLayoutGroup @ref="@lyGroup" ColSpanMd="18">
         <HeaderTemplate>
             <div class="row">
                 <div class="col-md-8">
@@ -38,48 +37,52 @@
             </div>
         </HeaderTemplate>
         <Items>
-            <DxFormLayoutItem Caption="Position:" ColSpanMd="18">
-                <DxTextBox @bind-Text="@Position" Enabled="!Unemployed" />
+            <DxFormLayoutItem @ref="@lyItem" Caption="Position:" ColSpanMd="18">
+                <DxTextBox @bind-Text="@Position"/>
             </DxFormLayoutItem>
             <DxFormLayoutItem Caption="Hire Date:" ColSpanMd="18">
-                <DxDateEdit @bind-Date="@HireDate" Enabled="!Unemployed" />
+                <DxDateEdit @bind-Date="@HireDate"  />
             </DxFormLayoutItem>
             <DxFormLayoutItem Caption="Notes:" ColSpanMd="18">
-                <DxTextBox @bind-Text="@Notes" Enabled="!Unemployed" />
+                <DxTextBox @bind-Text="@Notes" />
             </DxFormLayoutItem>
         </Items>
     </DxFormLayoutGroup>
 </DxFormLayout>
-<div class="row w-80 mx-0">
-    <p class="demo-text col-18 mt-8">
-        @nameof(FirstName)=<b>@FirstName</b>,
-        @nameof(LastName)=<b>@LastName</b>,
-        @nameof(BirthDate)=<b>@BirthDate</b>
-    </p>
-</div>
-<div class="row w-80 mx-0">
-    <p class="demo-text col-18 mt-8">
-        @nameof(Position)=<b>@Position</b>,
-        @nameof(HireDate)=<b>@HireDate</b>,
-        @nameof(Notes)=<b>@Notes</b>
-    </p>
-</div>
+
+
 
 @code {
+    public RenderFragment<DxFormLayout> renderTextBox = (DxFormLayout model) =>
+    @<DxFormLayout  style="@model"></DxFormLayout>;
+
+    RadzenLabel radzenLabel { get; set; } = new();
+    RadzenLabel radzenTitle { get; set; } = new();
+    DxSpinEdit<int> speGrade { get; set; }
+    DxFormLayout dxFormLayout { get; set; } = new();
+    DxFormLayoutItem lyItem { get; set; } = new();
+
+    DxFormLayoutGroup lyGroup { get; set; } = new();
+
+
+    int fontsize = 12;
+    public string speEdit = string.Empty;
+
     string FirstName { get; set; } = "Nancy";
     string LastName { get; set; } = "Davolio";
     DateTime BirthDate { get; set; } = DateTime.Now.AddYears(-80);
     string Position { get; set; } = "Sales Representative";
     DateTime? HireDate { get; set; } = DateTime.Now.AddYears(-80);
     string Notes { get; set; } = "Education includes a BA in psychology.";
-    bool Unemployed { get; set; }
-    void UnemployedChanged(bool value)
+
+    void NaikkanFont(int size)
     {
-        if (value)
-        {
-            Position = Notes = null;
-            HireDate = null;
-        }
-        Unemployed = value;
+        speEdit = $"{fontsize + size}px;";
+        radzenLabel.Style = "form_layout";
+        radzenTitle.Style = "form_layout";
+        lyGroup.CaptionCssClass = "form_layout";
+        lyGroup.HeaderCssClass = "form_layout";
+
     }
 }
+

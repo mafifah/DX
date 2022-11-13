@@ -61,11 +61,15 @@
 
     <ItemGroup>
       <Reference Include="Pantheon">
-        <HintPath>..\..\..\DevOps\Pantheon\Pantheon\obj\Debug\net7.0\Pantheon.dll</HintPath>
+        <HintPath>..\..\..\#Fortis Central\DevOps\Pantheon\Pantheon\bin\Debug\net7.0\Pantheon.dll</HintPath>
       </Reference>
       <Reference Include="rclPantheon">
-        <HintPath>..\..\..\DevOps\Pantheon\rclPantheon\obj\Debug\net7.0\rclPantheon.dll</HintPath>
+        <HintPath>..\..\..\#Fortis Central\DevOps\Pantheon\rclPantheon\bin\Debug\net7.0\rclPantheon.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\css\switcher-resources\" />
     </ItemGroup>
 
 </Project>

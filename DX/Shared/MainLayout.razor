@@ -1,11 +1,89 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    
 
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+    <HeadContent>
+        @foreach (var item in _activeTheme.StylesheetLinkUrl)
+        {
+            <link href="@item" rel="stylesheet" />
+        }
+        @{
+            if (_activeTheme.StylesheetLinkUrl.Contains("slate"))
+            {
+                <style>
+                    .dxbs-gridview {
+                        --selection-bg: rgba(255, 255, 255, 0.075) !important;
+                    }
+                </style>
+            }
+        }
+    </HeadContent>
     <main>
-        <article>
+        <div class="top-row px-4" style="z-index:99999 !important;">
+            <DxButton Id="flyout-overview-target-container" RenderStyle="ButtonRenderStyle.Secondary" Click="() => IsOpen = !IsOpen">AUTO</DxButton>
+            <ThemeSwitcherToggleButton @bind-Active=@_themeSwitcherShown />
+            <div id="settingsbar" class="@(_themeSwitcherShown ? "" : "hidden-settings-bar")">
+                <ThemeSwitcherSideView @bind-ActiveTheme="@_activeTheme" @bind-Visible="@_themeSwitcherShown" />
+            </div>
+        </div>
+
+
+
+        <DxFlyout @bind-IsOpen=IsOpen
+                  PositionTarget="#flyout-overview-target-container"
+                  RestrictionTarget="#Navigation-Flyout-Overview"
+                  FitToRestriction=true
+                  CloseMode="FlyoutCloseMode.Close"
+                  FooterVisible="true"
+                  FooterCssClass="custom-flyout-footer"
+                  Position="FlyoutPosition.Bottom"
+                  Width="max(25vw, 250px)"
+                  PreventCloseOnPositionTargetClick="true">
+
+            <BodyTemplate>
+                <div>
+                    <div class="custom-flyout-footer">
+                        <table style="padding:2px !important">
+                            <tr>
+                                <th rowspan="2">
+                                    <RadzenImage Style="height:100px;" Path="https://plumbr.io/app/uploads/2015/01/thread-lock.jpeg" />
+                                </th>
+                                <td>
+                                    <RadzenLabel Text="Auto" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Profil Saya" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </BodyTemplate>
+            <FooterTemplate>
+
+            </FooterTemplate>
+        </DxFlyout>
+        <article class="content px-4">
             @Body
         </article>
+
     </main>
+
 </div>
+
+
+
+
+
+
+@code {
+    bool IsOpen { get; set; } = false;
+    bool _themeSwitcherShown = false;
+    ThemeItem _activeTheme = ThemeItem.Default;
+}
