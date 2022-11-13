@@ -1,12 +1,18 @@
 ﻿@page "/counter"
 <style>
     .custom-button{
-        padding-left: 10.5vw;
+        padding-left: 7.5vw;
         float:right;
     }
-    @@media (max-width: 768px) {
+    
+    @@media only screen and (max-width: 768px) {
         .custom-button{
            margin-left: -6vh !important;
+        }
+    }
+    @@media only screen and (max-width: 992px) {
+        .custom-button{
+           margin-left: -5vh !important;
         }
     }
 </style>

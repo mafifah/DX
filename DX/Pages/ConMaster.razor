@@ -90,13 +90,23 @@
         height: 70vh;
     }
 
-    @@media (max-width: 768px) {
+    @@media only screen and (max-width: 768px) {
         .dxbs-grid{
            height: 60vh !important;
         }
 
         .konfigurasi{
             height:60vh !important;
+        }
+    }
+
+    @@media only screen and (max-width: 992px) {
+        .dxbs-grid{
+           height: 65vh !important;
+        }
+
+        .konfigurasi{
+            height:65vh !important;
         }
     }
     /*@@media(min-width:768px){
