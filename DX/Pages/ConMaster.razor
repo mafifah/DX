@@ -1,0 +1,51 @@
+﻿@page "/conmaster"
+@using DX.Data;
+@using Newtonsoft.Json.Linq
+@inject WeatherForecastService svc
+<RadzenProgressBar Value="1500" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Light" Mode="ProgressBarMode.Indeterminate" Visible="@IsLoading" />
+<RadzenSplitter Orientation="Radzen.Orientation.Horizontal" Collapse=@OnCollapse Expand=@OnExpand style="height: max-content; border: 0px solid rgba(0,0,0,.08);">
+    <RadzenSplitterPane Size="30%" Min="10px">
+        <DxGrid Data="@dsRekapitulasi"
+                PageSize="30"
+                CssClass="ch-360">
+            <Columns>
+                <DxGridDataColumn FieldName="TemperatureC" Caption="@("Temp. (\x2103)")" />
+                <DxGridDataColumn FieldName="TemperatureF" Caption="@("Temp. (\x2109)")" />
+                <DxGridDataColumn FieldName="Summary" Caption="Summary" />
+            </Columns>
+        </DxGrid>
+        <div class="footer">
+            deva trivanus
+        </div>
+    </RadzenSplitterPane>
+    <RadzenSplitterPane Style="height:80vh">
+        <h5 style="padding:5px;">Test</h5>
+    </RadzenSplitterPane>
+</RadzenSplitter>
+
+<style>
+
+    .footer {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+</style>
+
+@code {
+    IGrid Grid { get; set; }
+    public bool IsLoading { get; set; }
+    public List<WeatherForecast> dsRekapitulasi { get; set; } = new();
+    protected override async Task OnInitializedAsync()
+    {
+
+        dsRekapitulasi.AddRange(await svc.GetForecastAsync(DateTime.Now));
+    }
+    void OnCollapse(RadzenSplitterEventArgs args)
+    {
+    }
+    void OnExpand(RadzenSplitterEventArgs args)
+    {
+    }
+
+}

@@ -68,4 +68,8 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\css\switcher-resources\" />
+    </ItemGroup>
+
 </Project>
