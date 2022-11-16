@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using DX.Data;
 @using DX.Shared;
+@using System.Drawing.Printing;
 @using Newtonsoft.Json.Linq
 @inject WeatherForecastService svc
 @inject IJSRuntime JSRuntime
@@ -35,6 +36,8 @@
                             <DxComboBox Text="Tema" Data="@ListThemes"
                                         SelectedItemChanged="@((ModelTheme modelTheme) => OnItemClick(modelTheme))"
                                         DropDownCssClass="image purple"
+                                        TextFieldName="Theme"
+                                        ValueFieldName="Theme"
                                         Value="Value">
                                 <DxListEditorColumn FieldName="@nameof(ModelTheme.Parent)"
                                                     Caption="Sumber" />
@@ -52,17 +55,32 @@
                 <div>
                     <span style="font-size:small; color:gray">Pengaturan Cetak</span>
                 <DxGrid Data="@ListDokumen"
+                        
                         PageSize="30">
                         <Columns>
-                        <DxGridDataColumn FieldName="Dokumen" Caption="Dokumen" />
+                            <DxGridDataColumn FieldName="Dokumen" Caption="Dokumen">
+
+                            </DxGridDataColumn>
+
                             <DxGridDataColumn  Caption="P">
                                 <CellDisplayTemplate>
                                     <DxCheckBox Checked="false"></DxCheckBox>
                                 </CellDisplayTemplate>
-                             </DxGridDataColumn>
-                             <DxGridDataColumn Caption="Output">
+                            </DxGridDataColumn>
 
-                             </DxGridDataColumn>
+                        <DxGridDataColumn Caption="Output">
+                            <CellDisplayTemplate>
+                                <DxComboBox Text="Tema" Data="@ListPrinter"
+                                            TextFieldName="NamaPrinter"
+                                            ValueFieldName="NamaPrinter"
+                                            Value="Value">
+                                    <DxListEditorColumn FieldName="NamaPrinter"
+                                                        Caption="Printer" />
+                                </DxComboBox>
+                            </CellDisplayTemplate>
+                        </DxGridDataColumn>
+
+
                             <DxGridDataColumn  Caption="J">
                                 <CellDisplayTemplate>
                                     <DxSpinEdit MinValue="0" MaxValue="10"></DxSpinEdit>
@@ -140,6 +158,15 @@
     }*/
 </style>
 @code {
+
+    IEnumerable<string> Cities = new List<string>() {
+    "London",
+    "Berlin",
+    "Paris",
+  };
+
+    IEnumerable<string> Values { get; set; }
+
     ModelTheme modelTheme = new();
     public string urlTheme { get; set; } = "css/bootstrap/bootstrap.min.css";
     [Parameter] public bool Visible { get; set; }
@@ -187,6 +214,10 @@
         foreach (var item in doc)
         {
             ListDokumen.Add(new ModelDokumen { Dokumen = item });
+        }
+        foreach (string printname in PrinterSettings.InstalledPrinters)
+        {
+            ListPrinter.Add(new ModelPrinter{ NamaPrinter = printname});
         }
     }
     public async Task OnItemClick(ModelTheme? theme=null)
@@ -256,6 +287,11 @@
         public string Dokumen { get; set; }
     }
 
+    public class ModelPrinter
+    {
+        public string NamaPrinter { get; set; }
+    }
+
     public class ModelTheme
     {
         public string Parent { get; set; }
@@ -265,5 +301,7 @@
     string canCetak { get; set; } = "Rekapitulasi|Invoice|Barcode";
 
     List<ModelDokumen> ListDokumen { get; set; } = new();
+
+    List<ModelPrinter> ListPrinter { get; set; } = new();
 
 }
