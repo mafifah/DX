@@ -1,10 +1,10 @@
 ﻿@inject IJSRuntime JSRuntime
-<link rel="stylesheet" href="@urlstyle" />
+<link rel="stylesheet" href="@modVariabel.urlstyle" />
 @if (Visible)
 {
     <nav id="themesMenu">
         <ul class="nav nav-pills">
-            @foreach (var themeSet in GroupedThemes)
+            @foreach (var themeSet in modVariabel.GroupedThemes)
             {
                 <li class="nav-item theme-group">@themeSet.Key</li>
                 @foreach (var theme in themeSet.Value)
@@ -26,30 +26,20 @@
 
 @code {
 
-    public static string urlstyle{ get; set; } = "css/bootstrap/bootstrap.min.css";
-    static readonly Dictionary<string, string[]> GroupedThemes = new()
-        {
-            ["Color Themes"] = new[] { "default" },
-            ["DevExpress Themes"] = new[] { "blazing-berry", "purple", "office-white" },
-            ["Bootswatch Themes"] = new[] {
-            "cerulean", "cosmo", "cyborg", "darkly", "flatly", "journal", "litera",
-            "lumen", "lux", "materia", "minty", "pulse", "sandstone", "simplex", "sketchy", "slate",
-            "solar", "spacelab", "superhero", "united", "yeti"
-    }
-        };
-
+    
+    
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
     [Parameter] public ThemeItem ActiveTheme { get; set; }
     [Parameter] public EventCallback<ThemeItem> ActiveThemeChanged { get; set; }
-    async Task OnItemClick(string theme)
+    public async Task OnItemClick(string theme)
     {
         if (ActiveTheme.Name != theme)
         {
             var themeItem = ThemeItem.Create(theme);
             if (themeItem.StylesheetLinkUrl[1] is not null)
             {
-                urlstyle = themeItem.StylesheetLinkUrl[1];
+                modVariabel.urlstyle = themeItem.StylesheetLinkUrl[1];
             }
             foreach (string stylesheetLinkUrl in themeItem.StylesheetLinkUrl)
                 await JSRuntime.InvokeVoidAsync("fetch", stylesheetLinkUrl, new

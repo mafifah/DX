@@ -1,7 +1,9 @@
-﻿@page "/conmaster"
+﻿@page "/"
 @using DX.Data;
+@using DX.Shared;
 @using Newtonsoft.Json.Linq
 @inject WeatherForecastService svc
+@inject IJSRuntime JSRuntime
 <RadzenProgressBar Value="1500" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Light" Mode="ProgressBarMode.Indeterminate" Visible="@IsLoading" />
 <RadzenSplitter Orientation="Radzen.Orientation.Horizontal" Collapse=@OnCollapse Expand=@OnExpand style="height: max-content; border: 0px solid rgba(0,0,0,.08);">
     <RadzenSplitterPane Size="30%" Min="10px">
@@ -19,17 +21,33 @@
         <div hidden="@hideKonfigurasi" class="konfigurasi">
                 <div>
                     <span style="font-size:small; color:gray">Pengaturan Form</span>
-                    <DxGrid Data="@_konfigurasi"
-                        PageSize="30">
-                        <Columns>
-                            <DxGridDataColumn FieldName="Nama"/>
-                            <DxGridDataColumn FieldName="Value" Caption="Tampilan">
-                                <CellDisplayTemplate>
-                                    <DxSpinEdit MinValue="0" MaxValue="30" ValueChanged="@((int value) => UbahFontSize(value))"></DxSpinEdit>
-                                </CellDisplayTemplate>
-                             </DxGridDataColumn>
-                        </Columns>
-                    </DxGrid>
+                <DxFormLayout>
+                    <DxFormLayoutGroup Caption="Personal Information" ColSpanMd="12">
+                        <DxFormLayoutItem Caption="Skin Name:" ColSpanMd="12">
+                            @foreach (var themeSet in modVariabel.GroupedThemes)
+                            {
+                               
+                               @* <li class="nav-item theme-group">@themeSet.Key</li>
+                                @foreach (var theme in themeSet.Value)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link @(ActiveTheme.Name == theme ? "active" : "") "
+                                   href="#"
+                                  
+                                   @onclick:preventDefault>
+                                            <span class="image @theme.ToLower().Replace(" ", "-")" aria-hidden="true"></span>
+                                            <span class="theme-name">@theme</span>
+                                        </a>
+                                    </li>
+                                }*@
+                            }
+                        </DxFormLayoutItem>
+                        <DxFormLayoutItem Caption="Font Size:" ColSpanMd="12">
+                            <DxTextBox @bind-Text="@Value" />
+                        </DxFormLayoutItem>
+                    </DxFormLayoutGroup>
+                    @* ... *@
+                </DxFormLayout>
                 </div>
                 <br/><br/><br/>
                 <div>
@@ -119,6 +137,12 @@
     }*/
 </style>
 @code {
+
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    [Parameter] public ThemeItem ActiveTheme { get; set; }
+    [Parameter] public EventCallback<ThemeItem> ActiveThemeChanged { get; set; }
+    public string Value{ get; set; }
     string isRekapitulasiAktif = "btn-secondary";
     string isSettingAktif = "";
     bool hideRekapitulasi = false;
@@ -148,6 +172,29 @@
                 P = true,
                 J = 1,
             });
+    }
+    public async Task OnItemClick(string theme)
+    {
+        if (ActiveTheme.Name != theme)
+        {
+            var themeItem = ThemeItem.Create(theme);
+            if (themeItem.StylesheetLinkUrl[1] is not null)
+            {
+                modVariabel.urlstyle = themeItem.StylesheetLinkUrl[1];
+            }
+            foreach (string stylesheetLinkUrl in themeItem.StylesheetLinkUrl)
+                await JSRuntime.InvokeVoidAsync("fetch", stylesheetLinkUrl, new
+                {
+                    method = "GET",
+                    mode = "no-cors"
+                });
+            await Task.WhenAll(
+                ActiveThemeChanged.InvokeAsync(themeItem),
+                VisibleChanged.InvokeAsync(false)
+            );
+        }
+
+        StateHasChanged();
     }
 
     void TampilRekapitulasi()

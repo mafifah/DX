@@ -10,28 +10,12 @@
     <div class="sidebar">
         <NavMenu />
     </div>
-    <HeadContent>
-        @foreach (var item in _activeTheme.StylesheetLinkUrl)
-        {
-            <link href="@item" rel="stylesheet" />
-        }
-        @{
-            if (_activeTheme.StylesheetLinkUrl.Contains("slate"))
-            {
-                <style>
-                    .dxbs-gridview {
-                        --selection-bg: rgba(255, 255, 255, 0.075) !important;
-                    }
-                </style>
-            }
-        }
-    </HeadContent>
     <main>
         <div class="top-row px-4" style="z-index:99999 !important;">
             <DxButton Id="flyout-overview-target-container" RenderStyle="ButtonRenderStyle.Secondary" Click="() => IsOpen = !IsOpen">AUTO</DxButton>
             <ThemeSwitcherToggleButton @bind-Active=@_themeSwitcherShown />
             <div id="settingsbar" class="@(_themeSwitcherShown ? "" : "hidden-settings-bar")">
-                <ThemeSwitcherSideView @bind-ActiveTheme="@_activeTheme" @bind-Visible="@_themeSwitcherShown" />
+                <ThemeSwitcherSideView @bind-ActiveTheme="@modVariabel._activeTheme" @bind-Visible="@_themeSwitcherShown" />
             </div>
         </div>
         <DxFlyout @bind-IsOpen=IsOpen
@@ -86,5 +70,10 @@
 @code {
     bool IsOpen { get; set; } = false;
     bool _themeSwitcherShown = false;
-    ThemeItem _activeTheme = ThemeItem.Default;
+   
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
 }
