@@ -1,5 +1,65 @@
-﻿@page "/"
+﻿@page "/sdsd"
 @using rclPantheon.Controls
+
+
+<style>
+    .row_data_karyawan
+    {
+        margin-left : 10px;
+        margin-right:10px;
+    }
+</style>
+
+<DxAccordion>
+    @* Root items *@
+    <Items>
+        <DxAccordionItem>
+            <Template>
+                <div class="row row_data_karyawan">
+                    <div style="background-color:#AAAA; border-bottom: 1px solid black;" class="col">
+                        Nama Lengkap
+                    </div>
+                    <div style="background-color:#AAA;border-bottom: 1px solid black;" class="col">
+                        AUTO
+                    </div>
+                </div>
+            </Template>
+        </DxAccordionItem>
+        <DxAccordionItem>
+            <Template>
+                <div class="row row_data_karyawan">
+                    <div style="background-color:#AAAA" class="col">
+                        Nama Panggilan
+                    </div>
+                    <div style="background-color:#AAA" class="col">
+                        AUTO
+                    </div>
+                </div>
+            </Template>
+        </DxAccordionItem>
+        <DxAccordionItem Text="Shapes" Expanded="true">
+            @* Nested items *@
+            <Items>
+              <DxAccordionItem Text="Circle">
+                  <Template>
+                      <div class="row dxbl-accordion-item-content">
+                            <div style="background-color:#AAAA" class="col">
+                              Nama Lengkap 
+                          </div>
+                            <div style="background-color:#AAA" class="col">
+                                AUTO
+                            </div>
+                      </div>
+                  </Template>
+              </DxAccordionItem>
+
+            </Items>
+        </DxAccordionItem>
+        <DxAccordionItem CssClass="row_data_karyawan" style="background-color:#AAAA; border-bottom: 1px solid black;" Text="Templates" />
+    </Items>
+</DxAccordion>
+
+
 <DxFormLayout @ref="frmLayout" Id="frm" CssClass="w-100">
     <DxFormLayoutItem Caption="Nama Lengkap" ColSpanMd="6">
         <DxTextBox @ref="@txbNamaLengkap" Id="Name" />
@@ -9,7 +69,8 @@
         <DxFormLayoutTabPage Caption="Identitas">
             <DxFormLayoutGroup HeaderCssClass="custom-background" ColSpanMd="6">
                 <DxFormLayoutItem Caption="Nama Panggilan" ColSpanMd="12">
-                    <DxTextBox @ref="@txbNamaPanggilan"></DxTextBox>
+                    <DxTextBox  @ref="@txbNamaPanggilan"></DxTextBox>
+                    @txbNamaPanggilan.Text
                 </DxFormLayoutItem>
                 <DxFormLayoutItem Caption="Jenis Kelamin" ColSpanMd="12">
                     <RadzenRadioButtonList TValue="int" Orientation="Radzen.Orientation.Horizontal">
@@ -366,9 +427,11 @@
 </DxFormLayout>
 
 @code {
+    DxDataGrid<Cities> grid;
+
     DxFormLayout? frmLayout { get; set; } = new();
     DxTextBox? txbNamaLengkap { get; set; } = new();
-    DxTextBox? txbNamaPanggilan { get; set; } = new();
+    DxTextBox txbNamaPanggilan { get; set; } = new();
     DxTextBox? txbTempatLahir { get; set; } = new();
     DxDateEdit<DateTime>? dteTanggalLahir { get; set; } = new();
     DxDateEdit<DateTime>? dteTanggalRekrut { get; set; } = new();
@@ -429,6 +492,7 @@
 
     List<Cities> _cities = new();
     Cities _selectedCities = new();
+    //public EventCallback<string> TextChanged {get; set;}
 
     List<t5Jabatan> _jabatan = new();
     Cities _jabatanDipilih = new();
@@ -446,6 +510,19 @@
                 City = "AYZ"
             });
     }
+
+    void OnTextChanged(string newValue)
+    {
+        string Text = newValue;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        txbNamaPanggilan.BindValueMode = BindValueMode.OnInput;
+        txbNamaPanggilan.Text = "Name Test";
+        txbNamaPanggilan.TextChanged = new EventCallback<string>(this,(string text) => OnTextChanged(text));
+    }
+
     List<ImageFile> filesBase64 = new List<ImageFile>();
     string message = "InputFile";
     bool isDisabled = false;

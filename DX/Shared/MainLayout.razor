@@ -1,27 +1,15 @@
 ﻿@inherits LayoutComponentBase
 
-
+<style>
+    #settingsbar {
+        height: auto !important;
+    }
+</style>
 
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
-    <HeadContent>
-        @foreach (var item in _activeTheme.StylesheetLinkUrl)
-        {
-            <link href="@item" rel="stylesheet" />
-        }
-        @{
-            if (_activeTheme.StylesheetLinkUrl.Contains("slate"))
-            {
-                <style>
-                    .dxbs-gridview {
-                        --selection-bg: rgba(255, 255, 255, 0.075) !important;
-                    }
-                </style>
-            }
-        }
-    </HeadContent>
     <main>
         <div class="top-row px-4" style="z-index:99999 !important;">
             <DxButton Id="flyout-overview-target-container" RenderStyle="ButtonRenderStyle.Secondary" Click="() => IsOpen = !IsOpen">AUTO</DxButton>
@@ -30,9 +18,6 @@
                 <ThemeSwitcherSideView @bind-ActiveTheme="@_activeTheme" @bind-Visible="@_themeSwitcherShown" />
             </div>
         </div>
-
-
-
         <DxFlyout @bind-IsOpen=IsOpen
                   PositionTarget="#flyout-overview-target-container"
                   RestrictionTarget="#Navigation-Flyout-Overview"
