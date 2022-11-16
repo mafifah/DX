@@ -10,6 +10,22 @@
     <div class="sidebar">
         <NavMenu />
     </div>
+    <HeadContent>
+        @foreach (var item in _activeTheme.StylesheetLinkUrl)
+        {
+            <link href="@item" rel="stylesheet" />
+        }
+        @{
+            if (_activeTheme.StylesheetLinkUrl.Contains("slate"))
+            {
+                <style>
+                    .dxbs-gridview {
+                        --selection-bg: rgba(255, 255, 255, 0.075) !important;
+                    }
+                </style>
+            }
+        }
+    </HeadContent>
     <main>
         <div class="top-row px-4" style="z-index:99999 !important;">
             <DxButton Id="flyout-overview-target-container" RenderStyle="ButtonRenderStyle.Secondary" Click="() => IsOpen = !IsOpen">AUTO</DxButton>
