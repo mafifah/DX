@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+<link rel="stylesheet" href="@urlTheme" />
 
 <style>
     #settingsbar {
@@ -68,12 +69,14 @@
 
 
 @code {
+    public string urlTheme { get; set; } = "css/bootstrap/bootstrap.min.css";
     bool IsOpen { get; set; } = false;
     bool _themeSwitcherShown = false;
-   
+    
 
-    protected override void OnInitialized()
+    public void SetUrlTheme(string url)
     {
-        base.OnInitialized();
+        urlTheme = url;
+        InvokeAsync(StateHasChanged);
     }
 }

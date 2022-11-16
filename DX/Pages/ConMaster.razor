@@ -4,8 +4,15 @@
 @using Newtonsoft.Json.Linq
 @inject WeatherForecastService svc
 @inject IJSRuntime JSRuntime
+
+<link rel="stylesheet" href="@urlTheme" />
+
+
 <RadzenProgressBar Value="1500" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Light" Mode="ProgressBarMode.Indeterminate" Visible="@IsLoading" />
 <RadzenSplitter Orientation="Radzen.Orientation.Horizontal" Collapse=@OnCollapse Expand=@OnExpand style="height: max-content; border: 0px solid rgba(0,0,0,.08);">
+
+
+    <link rel="stylesheet" href="@urlTheme" />
     <RadzenSplitterPane Size="30%" Min="10px">
         <div hidden="@hideRekapitulasi">
             <DxGrid Data="@_dsRekapitulasi"
@@ -22,47 +29,41 @@
                 <div>
                     <span style="font-size:small; color:gray">Pengaturan Form</span>
                 <DxFormLayout>
+
                     <DxFormLayoutGroup Caption="Personal Information" ColSpanMd="12">
-                        <DxFormLayoutItem Caption="Skin Name:" ColSpanMd="12">
-                            @foreach (var themeSet in modVariabel.GroupedThemes)
-                            {
-                               
-                               @* <li class="nav-item theme-group">@themeSet.Key</li>
-                                @foreach (var theme in themeSet.Value)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link @(ActiveTheme.Name == theme ? "active" : "") "
-                                   href="#"
-                                  
-                                   @onclick:preventDefault>
-                                            <span class="image @theme.ToLower().Replace(" ", "-")" aria-hidden="true"></span>
-                                            <span class="theme-name">@theme</span>
-                                        </a>
-                                    </li>
-                                }*@
-                            }
+                        <DxFormLayoutItem Caption="Tema" ColSpanMd="12">
+                            <DxComboBox Text="Tema" Data="@ListThemes"
+                                        SelectedItemChanged="@((ModelTheme modelTheme) => OnItemClick(modelTheme))"
+                                        DropDownCssClass="image purple"
+                                        Value="Value">
+                                <DxListEditorColumn FieldName="@nameof(ModelTheme.Parent)"
+                                                    Caption="Sumber" />
+                                <DxListEditorColumn FieldName="@nameof(ModelTheme.Theme)"
+                                                    Caption="Tema" />
+                            </DxComboBox>
                         </DxFormLayoutItem>
                         <DxFormLayoutItem Caption="Font Size:" ColSpanMd="12">
                             <DxTextBox @bind-Text="@Value" />
                         </DxFormLayoutItem>
                     </DxFormLayoutGroup>
-                    @* ... *@
                 </DxFormLayout>
                 </div>
                 <br/><br/><br/>
                 <div>
                     <span style="font-size:small; color:gray">Pengaturan Cetak</span>
-                    <DxGrid Data="@_cetak"
+                <DxGrid Data="@ListDokumen"
                         PageSize="30">
                         <Columns>
-                            <DxGridDataColumn FieldName="Dokumen"/>
-                            <DxGridDataColumn FieldName="P" Caption="P">
+                        <DxGridDataColumn FieldName="Dokumen" Caption="Dokumen" />
+                            <DxGridDataColumn  Caption="P">
                                 <CellDisplayTemplate>
                                     <DxCheckBox Checked="false"></DxCheckBox>
                                 </CellDisplayTemplate>
                              </DxGridDataColumn>
-                             <DxGridDataColumn FieldName="Monitor"/>
-                            <DxGridDataColumn FieldName="J" Caption="J">
+                             <DxGridDataColumn Caption="Output">
+
+                             </DxGridDataColumn>
+                            <DxGridDataColumn  Caption="J">
                                 <CellDisplayTemplate>
                                     <DxSpinEdit MinValue="0" MaxValue="10"></DxSpinEdit>
                                 </CellDisplayTemplate>
@@ -85,6 +86,8 @@
     <RadzenSplitterPane Style="height:80vh">
         <h5 style="padding:5px;">Test</h5>
     </RadzenSplitterPane>
+
+    
 </RadzenSplitter>
 <style>
     .parent {
@@ -137,10 +140,10 @@
     }*/
 </style>
 @code {
-
+    ModelTheme modelTheme = new();
+    public string urlTheme { get; set; } = "css/bootstrap/bootstrap.min.css";
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
-    [Parameter] public ThemeItem ActiveTheme { get; set; }
     [Parameter] public EventCallback<ThemeItem> ActiveThemeChanged { get; set; }
     public string Value{ get; set; }
     string isRekapitulasiAktif = "btn-secondary";
@@ -152,9 +155,23 @@
     private int fontSize = 12;
     private List<WeatherForecast> _dsRekapitulasi { get; set; } = new();
     private List<Konfigurasi> _konfigurasi { get; set; } = new();
-    private List<PengaturanCetak> _cetak { get; set; } = new();
+    private List<ModelDokumen> _cetak { get; set; } = new();
+
+    public List<ModelTheme> ListThemes { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
+
+        foreach (var Themeitems in modVariabel.GroupedThemes)
+        {
+            string parent = Themeitems.Key.ToString();
+            foreach (var item in Themeitems.Value)
+            {
+                var data = new ModelTheme { Parent = parent, Theme = item };
+                ListThemes.Add(data);
+            }
+        }
+
         _dsRekapitulasi.AddRange(await svc.GetForecastAsync(DateTime.Now));
         _konfigurasi.Add(new Konfigurasi
             {
@@ -166,33 +183,36 @@
                 Nama = "Increase Font Size",
                 Value = 1,
             });
-        _cetak.Add(new PengaturanCetak
-            {
-                Dokumen = "Rekapitulasi",
-                P = true,
-                J = 1,
-            });
-    }
-    public async Task OnItemClick(string theme)
-    {
-        if (ActiveTheme.Name != theme)
+        var doc = canCetak.Split('|').ToList();
+        foreach (var item in doc)
         {
-            var themeItem = ThemeItem.Create(theme);
-            if (themeItem.StylesheetLinkUrl[1] is not null)
-            {
-                modVariabel.urlstyle = themeItem.StylesheetLinkUrl[1];
-            }
-            foreach (string stylesheetLinkUrl in themeItem.StylesheetLinkUrl)
-                await JSRuntime.InvokeVoidAsync("fetch", stylesheetLinkUrl, new
-                {
-                    method = "GET",
-                    mode = "no-cors"
-                });
-            await Task.WhenAll(
-                ActiveThemeChanged.InvokeAsync(themeItem),
-                VisibleChanged.InvokeAsync(false)
-            );
+            ListDokumen.Add(new ModelDokumen { Dokumen = item });
         }
+    }
+    public async Task OnItemClick(ModelTheme? theme=null)
+    {
+        if (theme != null)
+        {
+            if (modVariabel._activeTheme.Name != theme.Theme && theme != null)
+            {
+                var themeItem = ThemeItem.Create(theme.Theme);
+                if (themeItem.StylesheetLinkUrl[1] is not null)
+                {
+                    urlTheme = themeItem.StylesheetLinkUrl[1];
+                }
+                foreach (string stylesheetLinkUrl in themeItem.StylesheetLinkUrl)
+                    await JSRuntime.InvokeVoidAsync("fetch", stylesheetLinkUrl, new
+                    {
+                        method = "GET",
+                        mode = "no-cors"
+                    });
+                await Task.WhenAll(
+                    ActiveThemeChanged.InvokeAsync(themeItem),
+                    VisibleChanged.InvokeAsync(false)
+                );
+            }
+        }
+
 
         StateHasChanged();
     }
@@ -231,12 +251,19 @@
         public int Value { get; set; }
     }
 
-    public class PengaturanCetak
+    public class ModelDokumen
     {
         public string Dokumen { get; set; }
-        public bool P { get; set; }
-        public string Monitor { get; set; }
-        public int J { get; set; }
     }
+
+    public class ModelTheme
+    {
+        public string Parent { get; set; }
+        public string Theme { get; set; }
+    }
+
+    string canCetak { get; set; } = "Rekapitulasi|Invoice|Barcode";
+
+    List<ModelDokumen> ListDokumen { get; set; } = new();
 
 }
