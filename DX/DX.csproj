@@ -65,11 +65,22 @@
 
     <ItemGroup>
       <Reference Include="Pantheon">
-        <HintPath>..\..\..\#Fortis Central\DevOps\Pantheon\Pantheon\bin\Debug\net7.0\Pantheon.dll</HintPath>
+        <HintPath>..\..\..\DevOps\Pantheon\Pantheon\obj\Debug\net7.0\Pantheon.dll</HintPath>
       </Reference>
       <Reference Include="rclPantheon">
-        <HintPath>..\..\..\#Fortis Central\DevOps\Pantheon\rclPantheon\bin\Debug\net7.0\rclPantheon.dll</HintPath>
+        <HintPath>..\..\..\DevOps\Pantheon\rclPantheon\obj\Debug\net7.0\rclPantheon.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="wwwroot\css\bootstrap\bootstrap.css">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+      <Content Update="wwwroot\css\bootstrap\bootstrap.min.css">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
