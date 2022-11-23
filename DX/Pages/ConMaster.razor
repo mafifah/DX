@@ -100,40 +100,7 @@
     </RadzenSplitterPane>
 
     <RadzenSplitterPane class="hide-to-mobile">
-        <DxGrid Data="@ListDokumen"
-                CssClass="show-to-mobile"
-                PageSize="30">
-            <Columns>
-                <DxGridDataColumn FieldName="Dokumen" Caption="Dokumen">
-
-                </DxGridDataColumn>
-
-                <DxGridDataColumn Caption="P">
-                    <CellDisplayTemplate>
-                        <DxCheckBox Checked="false"></DxCheckBox>
-                    </CellDisplayTemplate>
-                </DxGridDataColumn>
-
-                <DxGridDataColumn Caption="Output">
-                    <CellDisplayTemplate>
-                        <DxComboBox Text="Tema" Data="@ListPrinter"
-                                    TextFieldName="NamaPrinter"
-                                    ValueFieldName="NamaPrinter"
-                                    Value="@nameof(ModelPrinter.NamaPrinter)">
-                            <DxListEditorColumn FieldName="NamaPrinter"
-                                                Caption="@nameof(ModelPrinter.NamaPrinter)" />
-                        </DxComboBox>
-                    </CellDisplayTemplate>
-                </DxGridDataColumn>
-
-
-                <DxGridDataColumn Caption="J">
-                    <CellDisplayTemplate>
-                        <DxSpinEdit MinValue="0" MaxValue="10"></DxSpinEdit>
-                    </CellDisplayTemplate>
-                </DxGridDataColumn>
-            </Columns>
-        </DxGrid>
+        <p>Detil</p>
     </RadzenSplitterPane>
 </RadzenSplitter>
 
@@ -352,6 +319,13 @@
         foreach (var item in doc)
         {
             ListDokumen.Add(new ModelDokumen { Dokumen = item });
+        }
+
+        //Untuk mendapatkan ukuran layar
+        var dimensiLayar = await JSRuntime.InvokeAsync<ModelDimensiLayar>("getDimensiLayar");
+        if (dimensiLayar.Lebar <= 992 || dimensiLayar.Lebar <= 768)
+        {
+            SizeTabel = "100%";
         }
         //foreach (string printname in PrinterSettings.InstalledPrinters)
         //{
