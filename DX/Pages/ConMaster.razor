@@ -14,7 +14,7 @@
     <RadzenSplitterPane Size="@SizeTabel">
         <div hidden="@hideRekapitulasi">
             <DxGrid Data="@_dsRekapitulasi"
-                PageSize="20"
+                PageSize="1000"
                 CssClass="ch-360">
                 <Columns>
                     <DxGridDataColumn FieldName="TemperatureC" Caption="@("Temp. (\x2103)")"/>
@@ -201,12 +201,12 @@
 <style>
 
     .tetap-bottom {
-  position: fixed !important;
-  z-index: 1030 !important;
-  bottom:0;
-  width:100% !important;
-  background-color:lightgray !important;
-}
+      position: fixed !important;
+      z-index: 1030 !important;
+      bottom:0;
+      width:100% !important;
+      background-color:lightgray !important;
+    }
 
     .tetap-bottom {
         position: fixed !important;
@@ -250,11 +250,11 @@
 
     @@media only screen and (max-width: 768px) {
         .dxbs-grid{
-           height: 60vh !important;
+           height: 70vh !important;
         }
 
         .konfigurasi{
-            height:60vh !important;
+            height:70vh !important;
         }
 
         .sidebar
@@ -279,11 +279,11 @@
 
     @@media only screen and (max-width: 992px) {
         .dxbs-grid{
-           height: 65vh !important;
+           height: 70vh !important;
         }
 
         .konfigurasi{
-            height:65vh !important;
+            height:70vh !important;
         }
 
         .rz-splitter-horizontal > .rz-splitter-bar{

@@ -64,11 +64,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Pantheon">
-        <HintPath>..\..\..\#Fortis Central\DevOps\Pantheon\Pantheon\bin\Debug\net7.0\Pantheon.dll</HintPath>
+      <Reference Include="clsSIMTREN">
+        <HintPath>..\..\..\..\XYZ\#Development\SIMTREN\clsSIMTREN\obj\Debug\net6.0\clsSIMTREN.dll</HintPath>
       </Reference>
       <Reference Include="rclPantheon">
-        <HintPath>..\..\..\#Fortis Central\DevOps\Pantheon\rclPantheon\bin\Debug\net7.0\rclPantheon.dll</HintPath>
+        <HintPath>..\..\..\DevOps\Pantheon\rclPantheon\obj\Debug\net7.0\rclPantheon.dll</HintPath>
       </Reference>
     </ItemGroup>
 
