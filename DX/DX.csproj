@@ -64,9 +64,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="clsSIMTREN">
-        <HintPath>..\..\..\..\XYZ\#Development\SIMTREN\clsSIMTREN\obj\Debug\net6.0\clsSIMTREN.dll</HintPath>
-      </Reference>
       <Reference Include="rclPantheon">
         <HintPath>..\..\..\DevOps\Pantheon\rclPantheon\obj\Debug\net7.0\rclPantheon.dll</HintPath>
       </Reference>
