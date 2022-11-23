@@ -27,6 +27,14 @@
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+    <script>
+        window.getDimensiLayar = function () {
+            return {
+                lebar: window.innerWidth,
+                tinggi: window.innerHeight
+            };
+        };
+    </script>
 </body>
 
 </html>

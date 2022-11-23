@@ -10,10 +10,9 @@
 
 
 <RadzenProgressBar class="hide-to-mobile" Value="1500" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Light" Mode="ProgressBarMode.Indeterminate" Visible="@IsLoading" />
-<RadzenSplitter class="hide-to-mobile" Orientation="Radzen.Orientation.Horizontal" Collapse=@OnCollapse Expand=@OnExpand style="height: max-content; border: 0px solid rgba(0,0,0,.08);">
-
-    <RadzenSplitterPane class="hide-to-mobile" Size="30%" Min="10px">
-        <div class="hide-to-mobile" hidden="@hideRekapitulasi">
+<RadzenSplitter Orientation="Radzen.Orientation.Horizontal" Collapse=@OnCollapse Expand=@OnExpand style="height: max-content; border: 0px solid rgba(0,0,0,.08);">
+    <RadzenSplitterPane Size="@SizeTabel">
+        <div hidden="@hideRekapitulasi">
             <DxGrid Data="@_dsRekapitulasi"
                 PageSize="20"
                 CssClass="ch-360">
@@ -55,7 +54,6 @@
                 <div>
                     <span style="font-size:small; color:gray">Pengaturan Cetak</span>
                 <DxGrid Data="@ListDokumen"
-                        
                         PageSize="30">
                         <Columns>
                             <DxGridDataColumn FieldName="Dokumen" Caption="Dokumen">
@@ -90,17 +88,18 @@
                     </DxGrid>
                 </div>
         </div>
-
-        <div style="align-items:end !important" class="tetap-bottom hide-to-mobile">
-                <button type="button" class="btn btn-default @isRekapitulasiAktif" @onclick="TampilRekapitulasi" data-toggle="tooltip" data-placement="top" title="Rekapitulasi" aria-label="Left Align">
-                    <span class="fa fa-regular fa-file-lines" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default @isSettingAktif" @onclick="TampilKonfigurasi" data-toggle="tooltip" data-placement="top" title="Settings" aria-label="Left Align">
-                    <span class="fa fa-solid fa-gear" aria-hidden="true"></span>
-                </button>
-        </div>
+            <div class="navbar fixed-bottom card navigasi-rekapitulasi hide-to-mobile">
+                <div class="card-body" style="align-items:end">
+                    <button type="button" class="btn btn-default @isRekapitulasiAktif" @onclick="TampilRekapitulasi" data-toggle="tooltip" data-placement="top" title="Rekapitulasi" aria-label="Left Align">
+                        <span class="fa fa-regular fa-file-lines" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default @isSettingAktif" @onclick="TampilKonfigurasi" data-toggle="tooltip" data-placement="top" title="Settings" aria-label="Left Align">
+                        <span class="fa fa-solid fa-gear" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+ 
     </RadzenSplitterPane>
-
     <RadzenSplitterPane class="hide-to-mobile">
         <DxGrid Data="@ListDokumen"
                 CssClass="show-to-mobile"
@@ -140,15 +139,7 @@
 </RadzenSplitter>
 
 <div class="tampilkan-footer">
-    <DxGrid Data="@_dsRekapitulasi"
-            PageSize="20"
-            CssClass="ch-360">
-        <Columns>
-            <DxGridDataColumn FieldName="TemperatureC" Caption="@("Temp. (\x2103)")" />
-            <DxGridDataColumn FieldName="TemperatureF" Caption="@("Temp. (\x2109)")" />
-            <DxGridDataColumn FieldName="Summary" Caption="Summary" />
-        </Columns>
-    </DxGrid>
+    <!--Tampilan untuk mobile-->
         <nav class="navbar fixed-bottom navbar-light bg-light">
             <form class="form-inline">
              <center>
@@ -250,7 +241,6 @@
         align-items:end;
     }
 
-
     @@media only screen and (max-width: 768px) {
         .dxbs-grid{
            height: 60vh !important;
@@ -273,6 +263,11 @@
         .tampilkan-footer {
             display: inherit !important;
         }
+
+        .rz-splitter-horizontal > .rz-splitter-bar{
+            display: none;
+        }
+        
     }
 
     @@media only screen and (max-width: 992px) {
@@ -283,12 +278,17 @@
         .konfigurasi{
             height:65vh !important;
         }
+
+        .rz-splitter-horizontal > .rz-splitter-bar{
+            display: none;
+        } 
     }
 </style>
 @code {
 
     bool IsOpen { get; set; } = false;
     bool IsOpenDate { get; set; } = false;
+    string SizeTabel { get; set; } = "30%";
 
     IEnumerable<string> Cities = new List<string>() {
     "London",
@@ -346,10 +346,10 @@
         {
             ListDokumen.Add(new ModelDokumen { Dokumen = item });
         }
-        foreach (string printname in PrinterSettings.InstalledPrinters)
-        {
-            ListPrinter.Add(new ModelPrinter{ NamaPrinter = printname});
-        }
+        //foreach (string printname in PrinterSettings.InstalledPrinters)
+        //{
+        //    ListPrinter.Add(new ModelPrinter{ NamaPrinter = printname});
+        //}
     }
     public async Task ProsesPilihTema(ModelTema? tema = null)
     {
@@ -428,7 +428,11 @@
         public string Tema { get; set; }
         public string Warna { get; set; }
     }
-
+    public class ModelDimensiLayar
+    {
+        public int Lebar { get; set; }
+        public int Tinggi { get; set; }
+    }
 
     string canCetak { get; set; } = "Rekapitulasi|Invoice|Barcode";
 
