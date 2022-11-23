@@ -88,17 +88,17 @@
                     </DxGrid>
                 </div>
         </div>
-
+        <div style="align-items:end !important" class="tetap-bottom hide-to-mobile">
+            <button type="button" class="btn btn-default @isRekapitulasiAktif" @onclick="TampilRekapitulasi" data-toggle="tooltip" data-placement="top" title="Rekapitulasi" aria-label="Left Align">
+                <span class="fa fa-regular fa-file-lines" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default @isSettingAktif" @onclick="TampilKonfigurasi" data-toggle="tooltip" data-placement="top" title="Settings" aria-label="Left Align">
+                <span class="fa fa-solid fa-gear" aria-hidden="true"></span>
+            </button>
+        </div>
  
     </RadzenSplitterPane>
-    <div class="navbar tetap-bottom hide-to-mobile">
-        <button type="button" class="btn btn-default @isRekapitulasiAktif" @onclick="TampilRekapitulasi" data-toggle="tooltip" data-placement="top" title="Rekapitulasi" aria-label="Left Align">
-            <span class="fa fa-regular fa-file-lines" aria-hidden="true"></span>
-        </button>
-        <button type="button" class="btn btn-default @isSettingAktif" @onclick="TampilKonfigurasi" data-toggle="tooltip" data-placement="top" title="Settings" aria-label="Left Align">
-            <span class="fa fa-solid fa-gear" aria-hidden="true"></span>
-        </button>
-    </div>
+
     <RadzenSplitterPane class="hide-to-mobile">
         <DxGrid Data="@ListDokumen"
                 CssClass="show-to-mobile"
