@@ -13,7 +13,7 @@
 <RadzenSplitter Orientation="Radzen.Orientation.Horizontal" Collapse=@OnCollapse Expand=@OnExpand style="height: max-content; border: 0px solid rgba(0,0,0,.08);">
     <RadzenSplitterPane Size="@SizeTabel">
         <div hidden="@hideRekapitulasi">
-            <DxGrid Data="@_dsRekapitulasi"
+            <DxGrid @ref="Grid" Data="@_dsRekapitulasi"
                 PageSize="1000"
                 CssClass="ch-360">
                 <Columns>
@@ -108,14 +108,12 @@
     <!--Tampilan untuk mobile-->
         <nav class="navbar fixed-bottom navbar-light bg-light">
             <form class="form-inline">
-             <center>
-                <button itemid="popup-date" id="popup-date" @onclick="()=> IsOpenDate = !IsOpenDate" class="btn" type="button"><i class="fa-regular fa-calendar"></i></button>
-                <button itemid="popup-filter" id="popup-filter" @onclick="()=> IsOpen = !IsOpen" class="btn" type="button"><i class="fa-solid fa-filter"></i></button>
-                <button class="btn btn-lg" type="button"><i class="fa-solid fa-print"></i></button>
-                <button class="btn btn-lg" type="button"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button class="btn btn-lg" type="button"><i class="fa-solid fa-wallet"></i></button>
-            </center>
-
+                <center>
+                    <button itemid="popup-date" id="popup-date" @onclick="()=> IsOpenDate = !IsOpenDate" class="btn" type="button"><i class="fa-regular fa-calendar"></i></button>
+                    <button itemid="popup-filter" id="popup-filter" @onclick="()=> IsOpen = !IsOpen" class="btn" type="button"><i class="fa-solid fa-filter"></i></button>
+                    <button class="btn btn-lg column-chooser-button" type="button" @onclick="@TampilkanColumnChooser"><i class="fa-solid fa-table-columns"></i></button>
+                    <button class="btn btn-lg" type="button"><i class="fa-solid fa-print"></i></button>
+                </center>
             </form>
         </nav>
 
@@ -387,7 +385,10 @@
     void OnExpand(RadzenSplitterEventArgs args)
     {
     }
-
+    async Task TampilkanColumnChooser()
+    {
+        this.Grid.ShowColumnChooser(".column-chooser-button");
+    }
     public class Konfigurasi
     {
         public string Nama { get; set; }
