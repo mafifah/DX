@@ -9,19 +9,15 @@
 <link rel="stylesheet" href="@urlTema" />
 
 
+
 <RadzenProgressBar class="hide-to-mobile" Value="1500" ShowValue="false" ProgressBarStyle="ProgressBarStyle.Light" Mode="ProgressBarMode.Indeterminate" Visible="@IsLoading" />
 <RadzenSplitter Orientation="Radzen.Orientation.Horizontal" Collapse=@OnCollapse Expand=@OnExpand style="height: max-content; border: 0px solid rgba(0,0,0,.08);">
     <RadzenSplitterPane Size="@SizeTabel">
-        <div hidden="@hideRekapitulasi">
-            <DxGrid @ref="Grid" Data="@_dsRekapitulasi"
-                PageSize="1000"
-                CssClass="ch-360">
-                <Columns>
-                    <DxGridDataColumn FieldName="TemperatureC" Caption="@("Temp. (\x2103)")"/>
-                    <DxGridDataColumn FieldName="TemperatureF" Caption="@("Temp. (\x2109)")"/>
-                    <DxGridDataColumn FieldName="Summary" Caption="Summary" />
-                </Columns>
-            </DxGrid>
+        <div class="hide-to-mobile" hidden="@hideRekapitulasi">
+            <DxCalendar T="DateTime" VisibleDate="@DateTime.Today" />
+            <DxListBox @bind-Value="@Value" Data="@Filters">
+
+            </DxListBox>
         </div>
         <div hidden="@hideKonfigurasi" class="konfigurasi hide-to-mobile">
                 <div>
@@ -100,7 +96,15 @@
     </RadzenSplitterPane>
 
     <RadzenSplitterPane class="hide-to-mobile">
-        <p>Detil</p>
+        <DxGrid @ref="Grid" Data="@_dsRekapitulasi"
+                PageSize="1000"
+                CssClass="ch-360">
+            <Columns>
+                <DxGridDataColumn FieldName="TemperatureC" Caption="@("Temp. (\x2103)")" />
+                <DxGridDataColumn FieldName="TemperatureF" Caption="@("Temp. (\x2109)")" />
+                <DxGridDataColumn FieldName="Summary" Caption="Summary" />
+            </Columns>
+        </DxGrid>
     </RadzenSplitterPane>
 </RadzenSplitter>
 
@@ -131,7 +135,7 @@
           PreventCloseOnPositionTargetClick="true">
 
     <BodyTemplate>
-       <DxListBox @bind-Value="@urlTema" Data="@Cities">
+        <DxListBox @bind-Value="@urlTema" Data="@Filters">
 
        </DxListBox>
     </BodyTemplate>
@@ -170,14 +174,6 @@
       bottom:0;
       width:100% !important;
       background-color:lightgray !important;
-    }
-
-    .tetap-bottom {
-        position: fixed !important;
-        z-index: 1030 !important;
-        bottom: 0;
-        width: 100% !important;
-        background-color: lightgray !important;
     }
 
     .rz-splitter-pane
@@ -261,10 +257,11 @@
     bool IsOpenDate { get; set; } = false;
     string SizeTabel { get; set; } = "30%";
 
-    IEnumerable<string> Cities = new List<string>() {
-    "London",
-    "Berlin",
-    "Paris",
+    IEnumerable<string> Filters = new List<string>() {
+    "Semua Data Tanpa Filter",
+    "Transaksi Aktif",
+    "Transaksi Batal",
+    "Transaksi Dalam 1 Hari",
   };
 
 
